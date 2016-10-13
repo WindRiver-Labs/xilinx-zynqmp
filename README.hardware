@@ -1,0 +1,96 @@
+		Xilinx ZynqMP Board Support Package
+
+
+Table of Contents
+=================
+
+1. Supported Boards
+2. Change History
+3. BSP Features
+4. BSP Notes
+
+
+1. Supported Boards
+===================
+
+This BSP supports the following boards:
+
+  + Xilinx ZYNQMP ZCU102 REV D1
+
+
+2. Change History
+=================
+
+  - 2016/10 (US82868): WRL8.0 RCPL10, Add the basic support for ZYNQMP ZCU102 
+                       Based on 2016.02
+
+
+3. BSP Features
+===============
+
+3.1 Supported Features
+----------------------
+
+The following BSP features are validated and supported on boards where
+the corresponding h/w features exist.
+
+  o General Platform
+	+ DMA Engine: The enhanced direct memory access (EDMA) controller
+	+ IOMMU
+	+ SMMUv2
+
+  o Bus
+	+ CAN: ZynqMP
+	+ I2C: Cadence 
+	+ SPI: ZynqMP
+ 
+  o Storage
+	+ NOR Flash: N25Q512A 128MB
+	+ Sata CEVA
+	+ SD/MMC:
+	+ USB: DWC3 Host Controller
+
+  o Misc Devices
+	+ EDAC zynqmp memory controller
+	+ INA2xx
+	+ RTC
+	+ UART
+
+3.2 Patch integrated and Unsupported Features
+---------------------------------------------
+
+The following features are not validated:
+
+  x Ethernet & IEEE1588:
+  x Multimedia, including DRM, DP, HDMI
+  x PCI-Express:  Host Bridge
+
+Please refer to BSP notes for more information.
+
+
+4. BSP Notes
+============
+
+4.1 Validated Board Info
+------------------------
+
+This BSP is only validated in following environment. If you use this BSP
+in a different environment it may possibly have some issues.
+
+	Processor:              ZYMQMP (410fd034 revision 4)
+	Board Revision:	        Rev D1
+	BootLoader:             U-Boot
+	BootLoader Version:     U-Boot 2016.01 (Jun 09 2016 - 17:19:01 -0600) 
+
+4.2 PCIe, Ethernet port, Multimedia 
+-----------------------------------
+
+Patches have been integrated, and ethernet port can be seen as SDK. But all of
+them don't work in both u-boot and Linux kernel.
+
+4.3 Clock system notes based on SDK 2016.2: 
+------------------------------------------
+
+Currently patches about all Xilinx-related common clock have been integrated
+into the latest commit, but obviously the fixed clock still are used by the
+whole system, which means this common clock system for Xilinx doesn't work.

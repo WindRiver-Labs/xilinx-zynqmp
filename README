@@ -1,0 +1,176 @@
+        Xilinx ZYNQMP Boards
+
+
+1. About this document
+======================
+This document describes the common and non-hardware specific information.
+Please refer to README.hardware for hardware specific information.
+
+Dependencies
+------------
+This layer depends on the oe-core version supplied with Wind River Linux
+and the wr-kernel layer.
+
+
+Maintenance
+-----------
+This layer is maintained by Wind River Systems, Inc.
+Contact <support@windriver.com> or your support representative for more
+information on submitting changes.
+
+
+Building the zynqmp layer
+-----------------------------
+This layer and wr-kernel layer should be added to bblayers.conf. This
+is done automatically when using the Wind River configure wrapper.
+
+
+License
+-------
+Copyright (C) 2016 Wind River Systems, Inc.
+
+The right to copy, distribute or otherwise make use of this software may
+be licensed only pursuant to the terms of an applicable Wind River license
+agreement. No license to Wind River intellectual properly rights is granted
+herein. All rights not licensed by Wind River are reserved by Wind River.
+
+Source code included in tree for individual recipes is under the LICENSE
+stated in each recipe (.bb file) unless other stated.
+
+
+2. BSP Kernel and RootFS Combination
+====================================
+
+The validity of WindRiver Linux kernel and RootFS combination for this BSP is
+in the table.
+The leftmost column of the table is the kernel type, and the top line is the
+RootFS type.
+'Y' in each content cell stands for the combination is supported; 'N' stands
+for not supported:
+
+--------------------------------------------------------------------
+| kernel/rootfs | glibc_std | glibc_small | glibc_cgl | glibc_tiny |
+--------------------------------------------------------------------
+|   standard    |     Y     |      Y      |     N     |     N      |
+--------------------------------------------------------------------
+|   preempt_rt  |     Y     |      Y      |     N     |     N      |
+--------------------------------------------------------------------
+
+Note: with regard to the kernel and RootFS type, please refer to WindRiver Linux
+specification for details.
+
+
+3. Board Specific Patches
+=========================
+
+To get a list of patches applied to the kernel specific to this BSP
+along with patch descriptions use git whatchanged on the default
+kernel (git whatchanged <kernel_type>..<bsp_name>). For example:
+
+	# cd path_to_project/bitbake_build/tmp/work-shared/xilinx-zynqmp/kernel-source
+	# git whatchanged standard/base..HEAD
+
+
+4. Boot Instructions
+====================
+
+It is necessary to load the DTB(device tree blob) into the target's memory
+prior to booting the kernel Image. The DTB file can be found in the export
+directory after building a project or you can generate it manually with the
+following commands:
+
+	# cd path_to_project
+	# make kds
+
+Here is the kernel source directory, you can create, edit your own dts by the
+command of "vim arch/arm64/boot/dts/xilinx/the_file_you_edit*.dts".
+
+	# make xilinx/zynqmp-zcu102.dtb
+
+Then the related DTB file can be found here:
+path_to_project/build/linux-windriver/linux-<board>-<kernel type>-build/arch/arm64/boot/dts/xilinx/
+
+Assumption:
+
+All files can be downloaded by network, so deploy your board and host properly
+to make sure network is available from the board.
+
+4.1 MTD Root File System (NOR and NAND Flash)
+---------------------------------------------
+
+The NOR device on xilinx-zynqmp board is a 128M Bytes NOR flash.
+The default layout of the NOR device is:
+
+    0x000000000000-0x000000100000 : "qspi-fsbl-uboot"
+    0x000000100000-0x000000600000 : "qspi-linux"
+    0x000000600000-0x000000620000 : "qspi-device-tree"
+    0x000000620000-0x000000c00000 : "qspi-rootfs"
+
+4.1.1 Generate the boot image:
+------------------------------
+
+Configure your project with the following options to generate the jffs2 boot
+image and enable necessary kernel options:
+	--enable-kernel=standard+cfg/fs/flash_fs.scc --enable-bootimage=jffs2
+
+After having done, the kernel image and jffs2 rootfs image can be found in
+the export directory.
+
+Program the image into flash with following command:
+
+	# flash_eraseall /dev/mtdx
+	# flashcp -v xilinx-zynqmp-wrlinux-image-glibc-small-preempt-rt-dist.jffs2 /dev/mtdx
+	# mkdir /mnt/jffs2
+	# mount -t jffs2 /dev/mtdblockx	/mnt/jffs2
+	# umount /mnt/jffs2
+
+NOTE: Before writing to the flash memory you need to know its layout, you can
+get this kind information by running 'cat /proc/mtd' on your target.
+
+4.1.2 Deployment
+----------------
+
+After loading the kernel, pass kernel arguments as shown:
+
+	root=/dev/mtdblockx rw rootfstype=jffs2 console=ttyPS0,115200 earlycon=cdns,mmio,0xFF000000,115200n8
+
+4.2 Boot from SD card
+---------------------
+
+4.2.1 Deploy kernel, DTB image and rootfs into your SD card
+-----------------------------------------------------------
+
+Please refer to bootloader/README about how to make a SD bootable card.
+And deploy properly kernel image, DTB image and rootfs as follows:
+
+	# mount /dev/mmcblk0p2 /mnt/sd
+	# tar xfj xilinx-zynqmp-wrlinux-image-glibc-std-preempt-rt-dist.tar.bz2 --numeric-owner -C /mnt/sd
+	# umount /mnt/sd
+	# mount /dev/mmcblk0p1 /mnt/sd
+	# cp path_to_Image /mnt/sd/boot
+	# cp path_to_zynqmp-zcu102.dtb /mnt/sd/boot
+	# umount /mnt/sd
+
+4.2.2 Set u-boot environment variables and boot from SD card
+------------------------------------------------------------
+
+Then run the following command to load the kernel image and DTB image:
+
+	=> setenv bootargs console=ttyPS0,115200 root=/dev/mmcblk0p2 rw rootwait earlycon=cdns,mmio,0xFF000000,115200n8
+	=> mmc rescan
+	=> fatload mmc 0 0x10000000 Image
+	=> fatload mmc 0 0x11800000 zynqmp-zcu102.dtb
+	=>  booti 0x10000000 - 0x11800000
+
+
+5. Features
+===========
+
+5.1. Multilib
+-------------
+
+By default, this BSP is configured as a 64-bit kernel and 64-bit userspace,
+if a full 32-bit filesystem is necessary, please append the following into
+your project configuration command:
+
+   --enable-multilib=lib32 --with-template=feature/multilib32
