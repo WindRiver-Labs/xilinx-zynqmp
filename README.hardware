@@ -44,6 +44,10 @@ the corresponding h/w features exist.
 	+ I2C: Cadence 
 	+ SPI: ZynqMP
  
+  o Network
+	+ MACB: Gigabits Controller
+	+ PHY: Fixed MDIO
+
   o Storage
 	+ NOR Flash: N25Q512A 128MB
 	+ Sata CEVA
@@ -61,7 +65,6 @@ the corresponding h/w features exist.
 
 The following features are not validated:
 
-  x Ethernet & IEEE1588:
   x Multimedia, including DRM, DP, HDMI
   x PCI-Express:  Host Bridge
 
@@ -94,3 +97,12 @@ them don't work in both u-boot and Linux kernel.
 Currently patches about all Xilinx-related common clock have been integrated
 into the latest commit, but obviously the fixed clock still are used by the
 whole system, which means this common clock system for Xilinx doesn't work.
+
+4.4 Ethernet RJ45 port
+----------------------
+Currently this port doesn't support lower speed, so only gigabits switch are
+supported, and it has been confirmed that the driver is more stable than the
+network controller IP.
+
+It is highly recommended not to take NFS as rootfs due to the mismatch between
+cadence driver and network controller IP on this hardware version.
