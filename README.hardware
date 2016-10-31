@@ -85,11 +85,19 @@ in a different environment it may possibly have some issues.
 	BootLoader:             U-Boot
 	BootLoader Version:     U-Boot 2016.01 (Jun 09 2016 - 17:19:01 -0600) 
 
-4.2 PCIe, Ethernet port, Multimedia 
------------------------------------
+4.2 PCIe, Multimedia
+--------------------
 
-Patches have been integrated, and ethernet port can be seen as SDK. But all of
-them don't work in both u-boot and Linux kernel.
+Patches have been integrated, but there are no-related TRD images available
+for PCIe and Multimedia, the following templates give a chance to validate
+PCIe and muiltimeda if you have the proper TRD matched to your hardware.
+
+  --with-template=feature/pcie
+  --with-template=feature/multimedia
+
+
+Note: For these above two, only build are validated, and no further support
+are vailable for them either since we have no way to validate them.
 
 4.3 Clock system notes based on SDK 2016.2: 
 ------------------------------------------
@@ -103,6 +111,3 @@ whole system, which means this common clock system for Xilinx doesn't work.
 Currently this port doesn't support lower speed, so only gigabits switch are
 supported, and it has been confirmed that the driver is more stable than the
 network controller IP.
-
-It is highly recommended not to take NFS as rootfs due to the mismatch between
-cadence driver and network controller IP on this hardware version.

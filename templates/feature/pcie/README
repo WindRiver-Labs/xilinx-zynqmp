@@ -1,0 +1,9 @@
+pcie-support
+============
+
+This feature provides additional kernel config fragments and userspace packages
+to support possible pcie devices.
+
+To enable this feature, please append the following:
+
+	--with-template=feature/pcie

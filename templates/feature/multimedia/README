@@ -1,0 +1,7 @@
+multimedia-support
+==================
+
+This feature provides additional kernel config fragments to enable multimedia
+related functions by appending the following into project configuration command:
+
+	--with-template=feature/multimedia
