@@ -8,12 +8,9 @@ MACHINE_FEATURES += "usbhost ext3 vfat pci"
 
 KERNEL_IMAGETYPE = "Image"
 
-SERIAL_CONSOLES ?= "115200;ttyPS0 115200"
-SERIAL_CONSOLES_CHECK ?= "${SERIAL_CONSOLES}"
+SERIAL_CONSOLE = "115200 ttyPS0"
 
 IMAGE_FSTYPES ?= "tar.bz2"
-
-CRIU_BUILD_ARCH = "armv8"
 
 # multilib support
 MULTILIBS ?= "multilib:lib32"

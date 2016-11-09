@@ -1,7 +1,0 @@
-multilib32-support
-==================
-
-This feature provides additional kernel config fragments to enable multilib32
-by appending the following into project configuration command:
-
-	--with-template=feature/multilib32

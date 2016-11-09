@@ -119,7 +119,7 @@ the export directory.
 Program the image into flash with following command:
 
 	# flash_eraseall /dev/mtdx
-	# flashcp -v xilinx-zynqmp-wrlinux-image-glibc-small-preempt-rt-dist.jffs2 /dev/mtdx
+	# flashcp -v wrlinux-image-glibc-small-xilinx-zynqmp.jffs2 /dev/mtdx
 	# mkdir /mnt/jffs2
 	# mount -t jffs2 /dev/mtdblockx	/mnt/jffs2
 	# umount /mnt/jffs2
@@ -144,7 +144,7 @@ Please refer to bootloader/README about how to make a SD bootable card.
 And deploy properly kernel image, DTB image and rootfs as follows:
 
 	# mount /dev/mmcblk0p2 /mnt/sd
-	# tar xfj xilinx-zynqmp-wrlinux-image-glibc-std-preempt-rt-dist.tar.bz2 --numeric-owner -C /mnt/sd
+	# tar xfj wrlinux-image-glibc-std-xilinx-zynqmp.tar.bz2 --numeric-owner -C /mnt/sd
 	# umount /mnt/sd
 	# mount /dev/mmcblk0p1 /mnt/sd
 	# cp path_to_Image /mnt/sd/boot
@@ -170,7 +170,7 @@ Then run the following command to load the kernel image and DTB image:
 -------------
 
 By default, this BSP is configured as a 64-bit kernel and 64-bit userspace,
-if a full 32-bit filesystem is necessary, please append the following into
-your project configuration command:
+if a full 32-bit filesystem is necessary, using the prefix "lib32-" before
+the expected target image as follows:
 
-   --enable-multilib=lib32 --with-template=feature/multilib32
+	# bitbake lib32-wrlinux-image-glibc-std
