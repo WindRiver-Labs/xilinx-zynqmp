@@ -15,3 +15,5 @@ IMAGE_FSTYPES ?= "tar.bz2"
 # multilib support
 MULTILIBS ?= "multilib:lib32"
 DEFAULTTUNE_virtclass-multilib-lib32 ?= "armv7athf-neon"
+
+COMPATIBLE_HOST_pn-netmap_xilinx-zynqmp = "null"
