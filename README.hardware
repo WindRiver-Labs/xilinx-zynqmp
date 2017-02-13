@@ -23,6 +23,7 @@ This BSP supports the following boards:
 
   - 2016/12 (US88597): WRLinux 9.0,  standard and preempt-rt support
 		Add the basic support for ZYNQMP ZCU102 based on 2016.02
+  - 2017/02 (US93750): Update to SDK 2016.04
 
 
 3. BSP Features
@@ -110,3 +111,9 @@ work.
 ----------------------
 Currently this port doesn't support lower speed, so only gigabits switch are
 supported.
+
+4.5 SDK v2016.04
+----------------
+
+All graphics related patches are not integrated since it never work on this
+hardware version.
