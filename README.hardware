@@ -86,33 +86,20 @@ in a different environment it may possibly have some issues.
 	BootLoader:             U-Boot
 	BootLoader Version:     U-Boot 2016.01 (Jun 09 2016 - 17:19:01 -0600) 
 
-4.2 PCIe
---------
-
-Patches have been integrated, but there are no-related TRD images available
-for PCIe, the following templates give a chance to validate it if you have
-the proper TRD matched to your hardware.
-
-  --with-template=feature/pcie
-
-
-Note: Only build are validated, and no further support are vailable since
-there is no way to validate them currently.
-
-4.3 Clock system notes based on SDK 2016.2: 
-------------------------------------------
+4.2 Clock system notes based on SDK
+-----------------------------------
 
 Currently patches about all Xilinx-related common clock have been integrated
 into the latest commit, but obviously the fixed clock still are used by the
 whole system, which means this common clock system about zynqmp driver doesn't
 work.
 
-4.4 Ethernet RJ45 port
+4.3 Ethernet RJ45 port
 ----------------------
 Currently this port doesn't support lower speed, so only gigabits switch are
 supported.
 
-4.5 SDK v2016.04
+4.4 SDK v2016.04
 ----------------
 
 All graphics related patches are not integrated since it never work on this
