@@ -174,3 +174,52 @@ if a full 32-bit filesystem is necessary, using the prefix "lib32-" before
 the expected target image as follows:
 
 	# bitbake lib32-wrlinux-image-glibc-std
+
+
+6. WIC Notes
+============
+
+User can use the OpenEmbedded Image Creator to create the properly partitioned
+image on a SD card. It generates partitioned images from existing OpenEmbedded
+build artifacts. Please refer to the following URL for more detailed partition
+information about WIC:
+
+http://www.yoctoproject.org/docs/2.2/mega-manual/mega-manual.html#creating-partitioned-images
+
+After having built your project, a partitioned WIC image will be created in the
+deploy folder as follows:
+
+  path_to_your_project/build/tmp/deploy/images/xilinx-zynqmp/wrlinux-image-glibc-<rootfs_type>-xilinx-zynqmp.wic
+
+There are two partitions in this WIC images, the first one is to hold the boot
+images, the second is the related root file system. Currently the fist one is
+just a holdplace, the end user needs to deploy their own u-boot files properly.
+
+6.1 An example to deploy bootloader into the first partition
+------------------------------------------------------------
+
+0) Change the first partition of the WIC image above into FAT16
+
+   $ sudo fdisk wrlinux-image-glibc-<rootfs_type>-xilinx-zynqmp.wic
+
+   # Type the command "t" from keyboard, then press "1" to select the first
+     partition, and "6" next to select FAT16.
+     Type the command "wq" to quit and save the changes.
+
+1) Deploy the created WIC image into SD card(/dev/sdx) in your host machine.
+
+   $ sudo dd if=wrlinux-image-glibc-<rootfs_type>-xilinx-zynqmp.wic of=/dev/sdx
+   $ sudo mkfs.fat /dev/sdx1
+
+2) Deploy the related bootloader files into /dev/sdx1
+
+   $ sudo mount /dev/sdx1 path_to_mountpoint_sdx1
+   $ cp -r path_to_your_bootloader/* path_to_mountpoint_sdx1
+   $ sync; sudo umount path_to_mountpoint_sdx1
+
+6.2 boot the board from the WIC SD card
+---------------------------------------
+
+Insert the SD card into the board and power on, then set the proper u-boot
+environment parameters to boot the board, please refer to section 4 for more
+information.

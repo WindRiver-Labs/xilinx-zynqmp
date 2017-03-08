@@ -1,0 +1,9 @@
+# short-description: Create a sd disk image (SD card)
+# long-description: Create a partitioned disk image for Xilinx-zynqmp
+# The first partition is NULL, reserved for uboot with Xilinx bitstream.
+# The second partition is to accommodate kernel, dtb and rootfs, if the
+# volome is not enough as rootfs, feel free to expand it by adding --size,
+# like --size=1024.
+
+part / --ondisk mmcblk --label fat16 --size 128 --align 4
+part / --source rootfs --ondisk mmcblk --fstype=ext4 --label rootfs --align 1024
