@@ -3,7 +3,7 @@
 
 1. About this document
 ======================
-This document describes the common and non-hardware specific information.
+This document provides common and non-hardware specific information.
 Please refer to README.hardware for hardware specific information.
 
 Dependencies
@@ -21,8 +21,7 @@ information on submitting changes.
 
 Building the zynqmp layer
 -----------------------------
-This layer and wr-kernel layer should be added to bblayers.conf. This
-is done automatically when using the Wind River configure wrapper.
+This layer and wr-kernel layer should be added to bblayers.conf.
 
 
 License
@@ -38,33 +37,33 @@ Source code included in tree for individual recipes is under the LICENSE
 stated in each recipe (.bb file) unless other stated.
 
 
-2. BSP Kernel and RootFS Combination
+2. BSP Kernel and Image Combination
 ====================================
 
-The validity of WindRiver Linux kernel and RootFS combination for this BSP is
-in the table.
-The leftmost column of the table is the kernel type, and the top line is the
-RootFS type.
-'Y' in each content cell stands for the combination is supported; 'N' stands
-for not supported:
+WindRiver Linux kernel and image compatibility for this BSP is described
+in the following table.
+The leftmost column indicates the kernel type, and the top row indicates
+the image type.
+A 'Y' in any content cell indicates that the combination is supported; 'N'
+indicates that it is not supported:
 
 --------------------------------------------------------------------
-| kernel/rootfs | glibc_std | glibc_small | glibc_cgl | glibc_tiny |
+| kernel/image  | glibc-std | glibc-small | glibc-cgl | glibc-tiny |
 --------------------------------------------------------------------
 |   standard    |     Y     |      Y      |     N     |     N      |
 --------------------------------------------------------------------
 |   preempt_rt  |     Y     |      Y      |     N     |     N      |
 --------------------------------------------------------------------
 
-Note: with regard to the kernel and RootFS type, please refer to WindRiver Linux
+Note: With regard to the kernel and image type, please refer to WindRiver Linux
 specification for details.
 
 
 3. Board Specific Patches
 =========================
 
-To get a list of patches applied to the kernel specific to this BSP
-along with patch descriptions use git whatchanged on the default
+To get a list of patches applied to the kernel for this BSP,
+along with patch descriptions, use 'git whatchanged' on the default
 kernel (git whatchanged <kernel_type>..<bsp_name>). For example:
 
 	# cd path_to_project/bitbake_build/tmp/work-shared/xilinx-zynqmp/kernel-source
@@ -74,31 +73,29 @@ kernel (git whatchanged <kernel_type>..<bsp_name>). For example:
 4. Boot Instructions
 ====================
 
-It is necessary to load the DTB(device tree blob) into the target's memory
+You must load the DTB (device tree blob) into the target's memory
 prior to booting the kernel Image. The DTB file can be found in the export
-directory after building a project or you can generate it manually with the
+directory after building a project, or you can generate it manually with the
 following commands:
 
-	# cd path_to_project
-	# make kds
+        # bitbake -c devshell virtual/kernel
+        # make zynqmp-<Board Name>.dtb
 
-Here is the kernel source directory, you can create, edit your own dts by the
-command of "vim arch/arm64/boot/dts/xilinx/the_file_you_edit*.dts".
+You can create and edit your own DTS using a command similar to:
 
+        # vim arch/arm64/boot/dts/xilinx/the_file_you_edit*.dts
 	# make xilinx/zynqmp-zcu102.dtb
 
-Then the related DTB file can be found here:
+The resulting DTB file can be found here:
 path_to_project/build/linux-windriver/linux-<board>-<kernel type>-build/arch/arm64/boot/dts/xilinx/
 
-Assumption:
-
-All files can be downloaded by network, so deploy your board and host properly
-to make sure network is available from the board.
+Assuming all files can be downloaded from a network, deploy your board and host
+properly to ensure your network is available from the board.
 
 4.1 MTD Root File System (NOR and NAND Flash)
 ---------------------------------------------
 
-The NOR device on xilinx-zynqmp board is a 128M Bytes NOR flash.
+The NOR device on the xilinx-zynqmp board is a 128M Byte NOR flash.
 The default layout of the NOR device is:
 
     0x000000000000-0x000000100000 : "qspi-fsbl-uboot"
@@ -109,14 +106,20 @@ The default layout of the NOR device is:
 4.1.1 Generate the boot image:
 ------------------------------
 
-Configure your project with the following options to generate the jffs2 boot
-image and enable necessary kernel options:
-	--enable-kernel=standard+cfg/fs/flash_fs.scc --enable-bootimage=jffs2
+Configure your project with the following options in your local.conf file
+to generate the jffs2 boot image and enable the necessary kernel options:
 
-After having done, the kernel image and jffs2 rootfs image can be found in
-the export directory.
+        LINUX_KERNEL_TYPE="standard"
+        IMAGE_FSTYPES="jffs2"
 
-Program the image into flash with following command:
+Start menuconfig and enable flash filesystem support:
+        # bitbake -c menuconfig linux-windriver
+You will find flash under the Filesystems section of menuconfig.
+
+
+The kernel image and jffs2 image can be found in the export directory.
+
+Program the image into flash with the following command:
 
 	# flash_eraseall /dev/mtdx
 	# flashcp -v wrlinux-image-glibc-small-xilinx-zynqmp.jffs2 /dev/mtdx
@@ -124,8 +127,8 @@ Program the image into flash with following command:
 	# mount -t jffs2 /dev/mtdblockx	/mnt/jffs2
 	# umount /mnt/jffs2
 
-NOTE: Before writing to the flash memory you need to know its layout, you can
-get this kind information by running 'cat /proc/mtd' on your target.
+NOTE: Before writing to the flash memory, you need to know its layout. You can
+get this information by running 'cat /proc/mtd' on your target.
 
 4.1.2 Deployment
 ----------------
@@ -137,11 +140,11 @@ After loading the kernel, pass kernel arguments as shown:
 4.2 Boot from SD card
 ---------------------
 
-4.2.1 Deploy kernel, DTB image and rootfs into your SD card
+4.2.1 Deploy kernel, DTB image and file system image into your SD card
 -----------------------------------------------------------
 
-Please refer to bootloader/README about how to make a SD bootable card.
-And deploy properly kernel image, DTB image and rootfs as follows:
+Refer to the bootloader/README for information on how to make an SD
+bootable card. Deploy the kernel image, DTB image and file system image as follows:
 
 	# mount /dev/mmcblk0p2 /mnt/sd
 	# tar xfj wrlinux-image-glibc-std-xilinx-zynqmp.tar.bz2 --numeric-owner -C /mnt/sd
@@ -151,16 +154,16 @@ And deploy properly kernel image, DTB image and rootfs as follows:
 	# cp path_to_zynqmp-zcu102.dtb /mnt/sd/boot
 	# umount /mnt/sd
 
-4.2.2 Set u-boot environment variables and boot from SD card
+4.2.2 Set the u-boot environment variables and boot from SD card
 ------------------------------------------------------------
 
-Then run the following command to load the kernel image and DTB image:
+Run the following command to load the kernel image and DTB image:
 
 	=> setenv bootargs console=ttyPS0,115200 root=/dev/mmcblk0p2 rw rootwait earlycon=cdns,mmio,0xFF000000,115200n8
 	=> mmc rescan
 	=> fatload mmc 0 0x10000000 Image
 	=> fatload mmc 0 0x11800000 zynqmp-zcu102.dtb
-	=>  booti 0x10000000 - 0x11800000
+	=> booti 0x10000000 - 0x11800000
 
 
 5. Features
@@ -169,8 +172,8 @@ Then run the following command to load the kernel image and DTB image:
 5.1. Multilib
 -------------
 
-By default, this BSP is configured as a 64-bit kernel and 64-bit userspace,
-if a full 32-bit filesystem is necessary, using the prefix "lib32-" before
+By default, this BSP is configured as a 64-bit kernel and 64-bit userspace.
+If a full 32-bit filesystem is necessary, use the prefix "lib32-" before
 the expected target image as follows:
 
 	# bitbake lib32-wrlinux-image-glibc-std
