@@ -12,7 +12,7 @@ SERIAL_CONSOLE = "115200 ttyPS0"
 
 IMAGE_FSTYPES += "tar.bz2 wic wic.bmap"
 WKS_FILE = "sdimage.wks"
-do_image_wic[depends] += "mtools-native:do_populate_sysroot"
+do_image_wic[depends] += "mtools-native:do_populate_sysroot  dosfstools-native:do_populate_sysroot"
 
 # multilib support
 MULTILIBS ?= "multilib:lib32"
