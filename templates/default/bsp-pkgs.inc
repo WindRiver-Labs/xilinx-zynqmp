@@ -1,6 +1,0 @@
-IMAGE_INSTALL += "i2c-tools"
-IMAGE_INSTALL += "irqbalance"
-IMAGE_INSTALL += "lm-sensors"
-IMAGE_INSTALL += "lmsensors-sensors"
-IMAGE_INSTALL += "pm-utils"
-IMAGE_INSTALL += "canutils"
