@@ -15,7 +15,7 @@ Table of Contents
 
 This BSP supports the following boards:
 
-  + Xilinx ZYNQMP ZCU102 REV D1
+  + Xilinx ZYNQMP ZCU102 REV 1.0
 
 
 2. Change History
@@ -24,6 +24,8 @@ This BSP supports the following boards:
   - 2016/12 (US88597): WRLinux 9.0,  standard and preempt-rt support
 		Add the basic support for ZYNQMP ZCU102 based on 2016.02
   - 2017/02 (US93750): Update to SDK 2016.04
+  - 2017/12 (US104834): Wind River Linux 9.0 RCPL13: upgrade to aglin to
+			xilinx-sdk-2017-01
 
 
 3. BSP Features
@@ -44,7 +46,9 @@ the corresponding h/w features exist.
 	+ CAN: ZynqMP
 	+ I2C: Cadence 
 	+ SPI: ZynqMP
- 
+	+ PCIe: On-Chip PCIe controller
+	+ USB: Host/Gadget/OTG mode
+
   o Network
 	+ MACB: Gigabits Controller
 	+ PHY: Fixed MDIO
@@ -53,7 +57,11 @@ the corresponding h/w features exist.
 	+ NOR Flash: N25Q512A 128MB
 	+ Sata CEVA
 	+ SD/MMC:
-	+ USB: DWC3 Host Controller
+
+  o Power Mgmt
+	+ CPU hotplug
+	+ CPU IDLE: WFI mode (wait for interrupt mode)
+	+ CPU Frequency
 
   o Misc Devices
 	+ EDAC zynqmp memory controller
@@ -67,7 +75,7 @@ the corresponding h/w features exist.
 The following features are not validated:
 
   x Multimedia, including DRM, DP, HDMI
-  x PCI-Express:  Host Bridge
+  x SFP/SFP+ Connector
 
 Please refer to BSP notes for more information.
 
@@ -81,10 +89,10 @@ Please refer to BSP notes for more information.
 This BSP is only validated in following environment. If you use this BSP
 in a different environment it may possibly have some issues.
 
-	Processor:              ZYMQMP (410fd034 revision 4)
-	Board Revision:	        Rev D1
+	Processor:              ZYMQMP (410fd034 revision 4, Chip ID: xczu9eg)
+	Board Revision:	        Rev 1.0
 	BootLoader:             U-Boot
-	BootLoader Version:     U-Boot 2016.01 (Jun 09 2016 - 17:19:01 -0600) 
+	BootLoader Version:     U-Boot 2017.01 (Apr 25 2017 - 03:56:44 -0600)
 
 4.2 Clock system notes based on SDK
 -----------------------------------
@@ -99,8 +107,9 @@ work.
 Currently this port doesn't support lower speed, so only gigabits switch are
 supported.
 
-4.4 SDK v2016.04
-----------------
+4.4 USB
+-------
 
-All graphics related patches are not integrated since it never work on this
-hardware version.
+To switch different USB modes, need to refer the web link:
+http://www.wiki.xilinx.com/Zynq+Ultrascale+MPSOC+Linux+USB+device+driver#OTG%20Mode
+
