@@ -12,9 +12,9 @@ u-boot, fsbl.
 
 Please download the zcu102 related prebuilt tarball from the following website:
 
-  http://www.wiki.xilinx.com/Zynq+2016.2+Release
+  http://www.wiki.xilinx.com/Zynq+2017.1+Release
 
-Then untar this tarball, enter into Xilinx-ZCU102-2016.2/pre-built/linux/images
+Then untar this tarball, enter into Xilinx-ZCU102-2017.1/pre-built/linux/images
 And deploy all files in that directory into the first partition of SD card to 
 boot the board.
 

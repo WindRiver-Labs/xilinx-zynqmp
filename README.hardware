@@ -24,7 +24,7 @@ This BSP supports the following boards:
   - 2016/12 (US88597): WRLinux 9.0,  standard and preempt-rt support
 		Add the basic support for ZYNQMP ZCU102 based on 2016.02
   - 2017/02 (US93750): Update to SDK 2016.04
-  - 2017/12 (US104834): Wind River Linux 9.0 RCPL13: upgrade to aglin to
+  - 2017/12 (US104834): Wind River Linux 9.0 RCPL13: upgrade to align to
 			xilinx-sdk-2017-01
 
 

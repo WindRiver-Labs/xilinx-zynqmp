@@ -195,8 +195,8 @@ deploy folder as follows:
   path_to_your_project/build/tmp/deploy/images/xilinx-zynqmp/wrlinux-image-glibc-<rootfs_type>-xilinx-zynqmp.wic
 
 There are two partitions in this WIC images, the first one is to hold the boot
-images, the second is the related root file system. Currently the fist one is
-just a holdplace, the end user needs to deploy their own u-boot files properly.
+images, the second is the related root file system. Currently the first one is
+just a hold place, the end user needs to deploy their own u-boot files properly.
 
 6.1 An example to deploy bootloader into the first partition
 ------------------------------------------------------------
