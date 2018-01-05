@@ -26,7 +26,8 @@ This BSP supports the following boards:
   - 2017/02 (US93750): Update to SDK 2016.04
   - 2017/12 (US104834): Wind River Linux 9.0 RCPL13: upgrade to align to
 			xilinx-sdk-2017-01
-
+  - 2018/02 (US107619): Wind River Linux 9.0 RCPL14: upgrade to
+			xilinx-sdk-2017-03 and add graphic support
 
 3. BSP Features
 ===============
@@ -69,16 +70,30 @@ the corresponding h/w features exist.
 	+ RTC
 	+ UART
 
+  o Graphic
+       + DRM
+       + ARM Mali-400MP2
+       + DisplayPort: only listed monitors are tested fine:
+       https://www.xilinx.com/support/answers/68671.html
+
 3.2 Patch integrated and Unsupported Features
 ---------------------------------------------
 
 The following features are not validated:
 
-  x Multimedia, including DRM, DP, HDMI
+  x Multimedia, PL, HDMI, SDI
   x SFP/SFP+ Connector
 
 Please refer to BSP notes for more information.
 
+NOTE: WR offers limited support for Graphics capabilities under the
+specific conditions we have performed validation and testing for. There is
+only GPU driver source code in kernel tree. About userspace libs, because of
+license limitation, there is no source code supplied by WR. If you need deeper
+support, please connect with XILINX to get authorization for userspace libs
+source code firstly, and then contact WR Sales team to engage WR Professional
+Services who can work with you to discuss and customize support for your deeper
+graphics requirements.
 
 4. BSP Notes
 ============
