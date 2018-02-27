@@ -17,11 +17,3 @@ Please download the zcu102 related prebuilt tarball from the following website:
 Then untar this tarball, enter into Xilinx-ZCU102-2017.1/pre-built/linux/images
 And deploy all files in that directory into the first partition of SD card to 
 boot the board.
-
-Notes:
-
-Please make sure the firt partition must be FAT16 in SD card, 300M is enough
-for this boot load with FAT16. As for the second partition, ext4 is recommended,
-greater than 1G should be OK.
-
-Make sure boot mode in SD boot way by setting sw6 into "0101"
