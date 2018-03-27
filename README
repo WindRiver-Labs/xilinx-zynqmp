@@ -26,7 +26,7 @@ This layer and wr-kernel layer should be added to bblayers.conf.
 
 License
 -------
-Copyright (C) 2016 Wind River Systems, Inc.
+Copyright (C) 2018 Wind River Systems, Inc.
 
 The right to copy, distribute or otherwise make use of this software may
 be licensed only pursuant to the terms of an applicable Wind River license
@@ -37,36 +37,32 @@ Source code included in tree for individual recipes is under the LICENSE
 stated in each recipe (.bb file) unless other stated.
 
 
-2. BSP Kernel and Image Combination
-====================================
+2. BSP Kernel and Distros
+=========================
 
-WindRiver Linux kernel and image compatibility for this BSP is described
-in the following table.
-The leftmost column indicates the kernel type, and the top row indicates
-the image type.
-A 'Y' in any content cell indicates that the combination is supported; 'N'
-indicates that it is not supported:
+The following table summarizes the valid Wind River Linux distros for this BSP.
+'Y' in each content cell stands for supported; 'N' stands for not supported:
 
---------------------------------------------------------------------
-| kernel/image  | glibc-std | glibc-small | glibc-cgl | glibc-tiny |
---------------------------------------------------------------------
-|   standard    |     Y     |      Y      |     N     |     N      |
---------------------------------------------------------------------
-|   preempt_rt  |     Y     |      Y      |     N     |     N      |
---------------------------------------------------------------------
+  +--------------+-------------+-------------+-------------+
+  | valid/distro |   wrlinux   | wrlinux-cgl | wrlinux-ovp |
+  +--------------+-------------+-------------+-------------+
+  |    valid     |      Y      |      N      |      N      |
+  +--------------+-------------+-------------+-------------+
 
-Note: With regard to the kernel and image type, please refer to WindRiver Linux
-specification for details.
+For the supported kernel type for this BSP, check the TARGET_SUPPORTED_KTYPES
+by running 'bitbake -e | grep "^TARGET_SUPPORTED_KTYPES"'.
+
+Note: The preempt-rt ktype is not available for this BSP/Machine at this time.
 
 
 3. Board Specific Patches
 =========================
 
-To get a list of patches applied to the kernel for this BSP,
-along with patch descriptions, use 'git whatchanged' on the default
+To get a list of patches applied to the kernel specific to this BSP,
+along with patch descriptions, use git to see what changed on the default
 kernel (git whatchanged <kernel_type>..<bsp_name>). For example:
 
-	# cd path_to_project/bitbake_build/tmp/work-shared/xilinx-zynqmp/kernel-source
+	# cd path_to_project/tmp-glibc/work-shared/xilinx-zynqmp/kernel-source
 	# git whatchanged standard/base..HEAD
 
 
