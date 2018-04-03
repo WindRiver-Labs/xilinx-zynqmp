@@ -1,0 +1,32 @@
+From 747f83f666f97825025eed0a7debf5a949c19879 Mon Sep 17 00:00:00 2001
+From: Zumeng Chen <zumeng.chen@windriver.com>
+Date: Wed, 28 Mar 2018 21:20:24 +0800
+Subject: [PATCH 1/2] linux/mali_osk_specific.h: fix a wrong uaccess.h index
+
+driver/src/devicedrv/mali/linux/mali_osk_specific.h: In function '_mali_osk_copy_from_user':
+driver/src/devicedrv/mali/linux/mali_osk_specific.h:62:14: error: implicit declaration of function 'copy_from_user'; did you mean 'raw_copy_from_user'? [-Werror=implicit-function-declaration]
+   return (u32)copy_from_user(to, from, (unsigned long)n);
+               ^~~~~~~~~~~~~~
+               raw_copy_from_user
+
+Signed-off-by: Zumeng Chen <zumeng.chen@widnriver.com>
+---
+ driver/src/devicedrv/mali/linux/mali_osk_specific.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/driver/src/devicedrv/mali/linux/mali_osk_specific.h b/driver/src/devicedrv/mali/linux/mali_osk_specific.h
+index adcca29..199363e 100755
+--- a/linux/mali_osk_specific.h
++++ b/linux/mali_osk_specific.h
+@@ -17,7 +17,7 @@
+ #ifndef __MALI_OSK_SPECIFIC_H__
+ #define __MALI_OSK_SPECIFIC_H__
+ 
+-#include <asm/uaccess.h>
++#include <linux/uaccess.h>
+ #include <linux/platform_device.h>
+ #include <linux/gfp.h>
+ #include <linux/hardirq.h>
+-- 
+2.7.4
+

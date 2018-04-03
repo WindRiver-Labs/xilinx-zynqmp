@@ -1,0 +1,44 @@
+From d2b7cfee839e3d032e3f50f5c90a5fcc824d75ca Mon Sep 17 00:00:00 2001
+From: Zumeng Chen <zumeng.chen@windriver.com>
+Date: Wed, 28 Mar 2018 21:27:47 +0800
+Subject: [PATCH 2/2] linux/mali_memory.c: uprev fault function to 4.12
+
+driver/src/devicedrv/mali/linux/mali_memory.c: In function 'mali_mem_vma_fault':
+driver/src/devicedrv/mali/linux/mali_memory.c:67:44: error: 'struct vm_fault' has no member named 'virtual_address'
+   unsigned long address = (unsigned long)vmf->virtual_address;
+                                           ^~
+driver/src/devicedrv/mali/linux/mali_memory.c: At top level:
+driver/src/devicedrv/mali/linux/mali_memory.c:136:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+   .fault = mali_mem_vma_fault,
+            ^~~~~~~~~~~~~~~~~~
+
+Signed-off-by: Zumeng Chen <zumeng.chen@widnriver.com>
+---
+ driver/src/devicedrv/mali/linux/mali_memory.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/driver/src/devicedrv/mali/linux/mali_memory.c b/driver/src/devicedrv/mali/linux/mali_memory.c
+index 9cf7ad7..2227fe0 100755
+--- a/linux/mali_memory.c
++++ b/linux/mali_memory.c
+@@ -57,14 +57,15 @@ static void mali_mem_vma_close(struct vm_area_struct *vma)
+ 	vma->vm_private_data = NULL;
+ }
+ 
+-static int mali_mem_vma_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
++static int mali_mem_vma_fault(struct vm_fault *vmf)
+ {
++	struct vm_area_struct *vma = vmf->vma;
+ 	mali_mem_allocation *alloc = (mali_mem_allocation *)vma->vm_private_data;
+ 	mali_mem_backend *mem_bkend = NULL;
+ 	int ret;
+ 	int prefetch_num = MALI_VM_NUM_FAULT_PREFETCH;
+ 
+-	unsigned long address = (unsigned long)vmf->virtual_address;
++	unsigned long address = vmf->address;
+ 	MALI_DEBUG_ASSERT(alloc->backend_handle);
+ 	MALI_DEBUG_ASSERT((unsigned long)alloc->cpu_mapping.addr <= address);
+ 
+-- 
+2.7.4
+

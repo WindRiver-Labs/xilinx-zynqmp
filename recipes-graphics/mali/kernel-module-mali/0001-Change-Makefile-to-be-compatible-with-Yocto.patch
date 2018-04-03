@@ -1,0 +1,49 @@
+From d9a4441c31faef60b7f39692df6913d58ec69d1b Mon Sep 17 00:00:00 2001
+From: Hyun Kwon <hyun.kwon@xilinx.com>
+Date: Thu, 8 Sep 2016 09:56:40 -0700
+Subject: [PATCH 1/6] Change Makefile to be compatible with Yocto
+
+Signed-off-by: Manjukumar Matha <manjukumar.harthikote-matha@xilinx.com>
+Signed-off-by: Hyun Kwon <hyun.kwon@xilinx.com>
+Upstream Status: Pending
+---
+ driver/src/devicedrv/mali/Makefile | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/driver/src/devicedrv/mali/Makefile b/driver/src/devicedrv/mali/Makefile
+index f39ae4d..9ef9713 100755
+--- Makefile
++++ b/Makefile
+@@ -88,7 +88,11 @@ endif
+ # Define host system directory
+ KDIR-$(shell uname -m):=/lib/modules/$(shell uname -r)/build
+ 
+-include $(KDIR)/.config
++ifeq ($(O),)
++	include $(KDIR)/.config
++else
++	include $(O)/.config
++endif
+ 
+ ifeq ($(ARCH), arm)
+ # when compiling for ARM we're cross compiling
+@@ -193,10 +197,15 @@ ifeq ($(MALI_MEM_SWAP_TRACKING),1)
+ EXTRA_DEFINES += -DMALI_MEM_SWAP_TRACKING=1
+ endif
+ 
++EXTRA_DEFINES += -Wno-error=date-time
++
+ all: $(UMP_SYMVERS_FILE)
+-	$(MAKE) ARCH=$(ARCH) -C $(KDIR) M=$(CURDIR) modules
++	$(MAKE) ARCH=$(ARCH) -C $(KDIR) M=$(CURDIR) O=$(O) modules
+ 	@rm $(FILES_PREFIX)__malidrv_build_info.c $(FILES_PREFIX)__malidrv_build_info.o
+ 
++modules_install:
++	$(MAKE) ARCH=$(ARCH) -C $(KDIR) M=$(CURDIR) modules_install
++
+ clean:
+ 	$(MAKE) ARCH=$(ARCH) -C $(KDIR) M=$(CURDIR) clean
+ 
+-- 
+2.7.4
+
