@@ -43,11 +43,11 @@ stated in each recipe (.bb file) unless other stated.
 The following table summarizes the valid Wind River Linux distros for this BSP.
 'Y' in each content cell stands for supported; 'N' stands for not supported:
 
-  +--------------+-------------+-------------+-------------+
-  | valid/distro |   wrlinux   | wrlinux-cgl | wrlinux-ovp |
-  +--------------+-------------+-------------+-------------+
-  |    valid     |      Y      |      N      |      N      |
-  +--------------+-------------+-------------+-------------+
+  +--------------+-------------+-------------+------------------+
+  | valid/distro |   wrlinux   | wrlinux-cgl | wrlinux-std-sato |
+  +--------------+-------------+-------------+------------------+
+  |    valid     |      Y      |      N      |         y        |
+  +--------------+-------------+-------------+------------------+
 
 For the supported kernel type for this BSP, check the TARGET_SUPPORTED_KTYPES
 by running 'bitbake -e | grep "^TARGET_SUPPORTED_KTYPES"'.
@@ -97,7 +97,8 @@ The default layout of the NOR device is:
     0x000000000000-0x000000100000 : "qspi-fsbl-uboot"
     0x000000100000-0x000000600000 : "qspi-linux"
     0x000000600000-0x000000620000 : "qspi-device-tree"
-    0x000000620000-0x000000c00000 : "qspi-rootfs"
+    0x000000620000-0x000002620000 : "qspi-bitstream"
+    0x000002620000-0x000008000000 : "qspi-rootfs"
 
 4.1.1 Generate the boot image:
 ------------------------------
@@ -222,3 +223,106 @@ just a hold place, the end user needs to deploy their own u-boot files properly.
 Insert the SD card into the board and power on, then set the proper u-boot
 environment parameters to boot the board, please refer to section 4 for more
 information.
+
+
+7. CAN
+======
+
+# configure can0 in the speed of 800000
+   $ ip link set can0 up type can bitrate 800000
+   $ ip -details link show can0
+
+# send out a single frame
+   $ cansend can0 1F334455#1122334455667788
+   $ ip link set can0 down
+
+
+8. DP monitor operations
+========================
+
+8.1 Show and adjust screen resolution, some draw exmaples
+---------------------------------------------------------
+   root@xilinx-zynqmp:~# export DISPLAY=:0.0
+   root@xilinx-zynqmp:~# xrandr
+   Screen 0: minimum 320 x 200, current 1024 x 768, maximum 4096 x 4096
+   DP-1 connected primary 1024x768+0+0 518mm x 324mm
+      1920x1080     24.00    23.98
+      1280x720      60.00    50.00    59.94
+      1024x768      75.03*   60.00
+      800x600       75.00    60.32
+      720x576       50.00
+      720x480       60.00    59.94
+      640x480       75.00    60.00    59.94
+      720x400       70.08
+   root@xilinx-zynqmp:~# xrandr -s 1920x1080
+   PLL: shutdown
+   PLL: enable
+   root@xilinx-zynqmp:~# eglinfo
+   EGL API version: 1.4
+   EGL vendor string: ARM
+   EGL version string: 1.4 Linux-r7p0-00rel0
+   EGL client APIs: OpenGL_ES
+   EGL extensions string:
+       EGL_KHR_image EGL_KHR_image_base EGL_KHR_image_pixmap
+       EGL_EXT_image_dma_buf_import EGL_KHR_gl_texture_2D_image
+       EGL_KHR_gl_texture_cubemap_image EGL_KHR_gl_renderbuffer_image
+       EGL_KHR_reusable_sync EGL_KHR_fence_sync
+       EGL_KHR_swap_buffers_with_damage EGL_EXT_swap_buffers_with_damage
+       EGL_KHR_lock_surface EGL_KHR_lock_surface2
+       EGL_EXT_create_context_robustness EGL_ANDROID_blob_cache
+       EGL_KHR_create_context EGL_KHR_partial_update
+       EGL_KHR_create_context_no_error
+   EGL client extensions string:
+       EGL_EXT_client_extensions EGL_EXT_platform_base EGL_KHR_platform_x11
+   Configurations:
+        bf lv colorbuffer dp st  ms    vis   cav bi  renderable  supported
+     id sz  l  r  g  b  a th cl ns b    id   eat nd gl es es2 vg surfaces
+   ---------------------------------------------------------------------
+   0x05 16  0  5  6  5  0 24  8  0 0 0x21SG      y     y  y     win,pb,pix
+   0x03 16  0  5  6  5  0 24  8  4 1 0x21SG      y     y  y     win,pb,pix
+   0x04 16  0  5  6  5  0 24  8 16 1 0x21SG   y  y     y  y     win,pb,pix
+   0x13 16  0  5  5  5  1 24  8  0 0 0x00SG      a     y  y     pb
+   0x12 16  0  5  5  5  1 24  8  4 1 0x00SG      a     y  y     pb
+   0x14 16  0  5  5  5  1 24  8 16 1 0x00SG   y  a     y  y     pb
+   0x15 16  0  4  4  4  4 24  8  0 0 0x00SG      a     y  y     pb
+   0x16 16  0  4  4  4  4 24  8  4 1 0x00SG      a     y  y     pb
+   0x17 16  0  4  4  4  4 24  8 16 1 0x00SG   y  a     y  y     pb
+   0x09 32  0  8  8  8  8 24  8  0 0 0x54SG   y  a     y  y     win,pb,pix
+   0x26 24  0  8  8  8  0 24  8  0 0 0x00SG   y  a     y  y     pb,pix
+   0x29 24  0  8  8  8  0 24  8  4 1 0x00SG   y  a     y  y     pb,pix
+   0x2a 24  0  8  8  8  0 24  8 16 1 0x00SG   y  a     y  y     pb,pix
+   0x0c 32  0  8  8  8  8 24  8  4 1 0x54SG   y  a     y  y     win,pb,pix
+   0x0f 32  0  8  8  8  8 24  8 16 1 0x54SG   y  a     y  y     win,pb,pix
+   0x0d  8  0  0  0  0  0  0  0  0 0 0x00SG   y                 pix
+   0x0e 16  0  0  0  0  8  0  0  0 0 0x00SG   y                 pix
+   0x1c 16  0  5  6  5  0  0  0  1 0 0x21SG                     win
+   0x23 16  0  5  5  5  1  0  0  1 0 0x00SG
+   0x22 32  0  8  8  8  8  0  0  1 0 0x54SG   y                 win
+   0x1b 32  0  8  8  8  8  0  0  1 0 0x54SG   y                 win
+   0x27 32  0  8  8  8  8 24  8  0 0 0x00SG   y  a     y  y     pix
+
+   root@xilinx-zynqmp:~# msaa
+   EGL_VERSION = 1.4 Linux-r7p0-00rel0
+   EGL_VENDOR = ARM
+   EGL_EXTENSIONS = EGL_KHR_image EGL_KHR_image_base EGL_KHR_image_pixmap EGL_EXT_image_dma_buf_import EGL_KHR_gl_texture_2D_image EGL_KHR_gl_texture_cubemap_image EGL_KHR_gl_renderbuffer_image EGL_KHR_reusable_sy
+   EGL_CLIENT_APIS = OpenGL_ES
+   Press 'a' to toggle multisample antialiasing
+   Press 'Esc' to exit
+   MSAA disabled
+
+   root@xilinx-zynqmp:~# tri_x11
+   EGL_VERSION = 1.4 Linux-r7p0-00rel0
+
+8.2 Notes:
+---------
+It seems mesa-demos are not compatible with libmali-xlnx, so not all test cases
+can be passed, and we'll keep them as-is since debugging binary lib has not too
+much meanings to the end user.
+
+9 lib32 note
+============
+
+lib32-wrlinux-image-glibc-std-sato can be built and boot, but the graphics
+output will not be available since the related graphics libs elg libgles1,
+and libgles2 provided by libmali-xlnx can not be re-built into lib32 mode
+because of its binary-provider only.

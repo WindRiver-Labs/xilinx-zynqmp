@@ -28,6 +28,8 @@ This BSP supports the following boards:
 			xilinx-sdk-2017-01
   - 2018/02 (US107619): Wind River Linux 9.0 RCPL14: upgrade to
 			xilinx-sdk-2017-03 and add graphic support
+  - 2018/05 (US107241): RCPL-10.17.41.7: Based on SDK2017.04 and Rev 1.0
+
 
 3. BSP Features
 ===============
@@ -71,17 +73,19 @@ the corresponding h/w features exist.
 	+ UART
 
   o Graphic
-       + DRM
-       + ARM Mali-400MP2
-       + DisplayPort: only listed monitors are tested fine:
+       + ARM Mali-400 MP2(r7p0-00rel0)
+       + DisplayPort
+       + Xilinx DRM
+       + Xilinx FB
 
 3.2 Patch integrated and Unsupported Features
 ---------------------------------------------
 
-The following features are not validated:
+The following features are not validated fanned out from PL:
 
-  x Multimedia, PL, HDMI, SDI
-  x SFP/SFP+ Connector
+  x HPC0, HPC1 ports (One for imx274 camera)
+  x Two HDMI ports
+  x 2x2 SFP/SFP+ ports
 
 Please refer to BSP notes for more information.
 
@@ -119,16 +123,74 @@ following link:
 
   http://www.wiki.xilinx.com/ZynqMP+Linux+PCIe+Root+Port
 
-It seems intel e1000e work well, and lspci can detect intel 82599ES either
-as follows:
-
-oot@xilinx-zynqmp:~# lspci
-00:00.0 PCI bridge: Xilinx Corporation Device d021
-01:00.0 Ethernet controller: Intel Corporation 82599ES 10-Gigabit SFI/SFP+ Network Connection (rev 01)
-01:00.1 Ethernet controller: Intel Corporation 82599ES 10-Gigabit SFI/SFP+ Network Connection (rev 01)
-
 4.4 DisplayPort
 ---------------
 
 According to the vendor, only some monitors in the following link are supported:
   https://www.xilinx.com/support/answers/68671.html
+
+It is mandatory to have direct a connection between the ZCU102 board and display
+monitor through a DP cable.
+
+4.5 Mali400 kernel module and userspace lib for zynqmp
+------------------------------------------------------
+
+3D-graphics apps calls Mali-libs API(libmali-xlnx) to drive the Mali400 GPU
+directly by Mali400 kernel driver.
+Some of mesa-demos tests cases can be used to validate this function limitly,
+but we just keep this part as-is without further debugging since only binary
+libs are available.
+
+Currently we can't include libmali-xlnx directly because of license issue, so
+the following lines have been uncommented from conf/machine/xilinx-zynqmp.inc
+
+  # PREFERRED_PROVIDER_virtual/mesa_xilinx-zynqmp = "mesa-gl"
+  # PREFERRED_PROVIDER_virtual/libgl_xilinx-zynqmp = "mesa-gl"
+  # PREFERRED_PROVIDER_virtual/libgles1_xilinx-zynqmp = "libmali-xlnx"
+  # PREFERRED_PROVIDER_virtual/libgles2_xilinx-zynqmp = "libmali-xlnx"
+  # PREFERRED_PROVIDER_virtual/egl_xilinx-zynqmp = "libmali-xlnx"
+
+And libmali-xlnx also has been uncommented from the whitelist in bsp-pkgs.conf
+
+  # PNWHITELIST_wr-xilinx-zynqmp += 'libmali-xlnx'
+
+So directly building sato with "bitbake wrlinux-image-glibc-std-sato" will be
+meaningless for graphics output. Here three steps to build it:
+
+  1> Get mali400-xlnx-userspace from the vendor, or you can directly download
+     the tarball if you have the valid account by the link posted in the below
+     part of this section, and then copy it into the following fold:
+
+     $ cp path_to_the_tarball path_to_your_project/layers/xilinx-zynqmp/downloads/git2_gitenterprise.xilinx.com.Graphics.mali400-xlnx-userspace.git.tar.gz
+
+  2> uncomment all lines mentioned above as follows shown("# " removed):
+
+     In the path_to_your_project/layers/xilinx-zynqmp/conf/machine/xilinx-zynqmp.inc
+
+       PREFERRED_PROVIDER_virtual/mesa_xilinx-zynqmp = "mesa-gl"
+       PREFERRED_PROVIDER_virtual/libgl_xilinx-zynqmp = "mesa-gl"
+       PREFERRED_PROVIDER_virtual/libgles1_xilinx-zynqmp = "libmali-xlnx"
+       PREFERRED_PROVIDER_virtual/libgles2_xilinx-zynqmp = "libmali-xlnx"
+       PREFERRED_PROVIDER_virtual/egl_xilinx-zynqmp = "libmali-xlnx"
+
+     In the path_to_your_project/layers/xilinx-zynqmp/templates/default/bsp-pkgs.conf
+
+       PNWHITELIST_wr-xilinx-zynqmp += 'libmali-xlnx'
+
+  3> Launch bitbake to build wrlinux-image-glibc-std-sato with libmali-xlnx
+
+     $ cd path_to_your_project
+     $ . ./oe-init-build-env
+     $ rm -f conf/wr*
+     $ bitbake wrlinux-image-glibc-std-sato
+
+Here is the download website for the libmali-xlnx binary libs:
+  http://www.xilinx.com/products/design-tools/embedded-software/petalinux-sdk/arm-mali-400-software-download.html
+
+4.6 Hardware features fanned out from PL
+----------------------------------------
+
+Most of these features are not validated since they need a special TRD firmware
+bootloader with the related PL bitstream, generally speaking, you can download
+these the specific Xilinx xapp from the vendor website wih your Xilinx account,
+like xapp1305 for SFP interface.
