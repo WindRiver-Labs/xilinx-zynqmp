@@ -136,8 +136,8 @@ According to the vendor, only some monitors in the following link are supported:
 It is mandatory to have direct a connection between the ZCU102 board and display
 monitor through a DP cable.
 
-4.5 Mali400 kernel module and userspace lib for zynqmp
-------------------------------------------------------
+4.5 Mali400 userspace lib for zynqmp
+------------------------------------
 
 3D-graphics apps calls Mali-libs API(libmali-xlnx) to drive the Mali400 GPU
 directly by Mali400 kernel driver.
@@ -145,47 +145,30 @@ Some of mesa-demos tests cases can be used to validate this function limitly,
 but we just keep this part as-is without further debugging since only binary
 libs are available.
 
-Currently we can't include libmali-xlnx directly because of license issue, so
-the following lines have been uncommented from conf/machine/xilinx-zynqmp.inc
+Due to the software license terms, we are not permitted to redistribute the
+libmali-xlnx components. Due to this, we are unable to support the components
+or directly enabled them within Wind River Linux. Please contact your silicon
+vendor if you have any questions about the libmali-xlnx software license terms.
 
-  # PREFERRED_PROVIDER_virtual/mesa_xilinx-zynqmp = "mesa-gl"
-  # PREFERRED_PROVIDER_virtual/libgl_xilinx-zynqmp = "mesa-gl"
-  # PREFERRED_PROVIDER_virtual/libgles1_xilinx-zynqmp = "libmali-xlnx"
-  # PREFERRED_PROVIDER_virtual/libgles2_xilinx-zynqmp = "libmali-xlnx"
-  # PREFERRED_PROVIDER_virtual/egl_xilinx-zynqmp = "libmali-xlnx"
+If you wish to build a graphics enabled system, you will need to contact the
+vendor and acquire the mali400-xlnx-userspace components.
 
-And libmali-xlnx also has been uncommented from the whitelist in bsp-pkgs.conf
+  1) Extract the components and make them available into the build environment
 
-  # PNWHITELIST_wr-xilinx-zynqmp += 'libmali-xlnx'
+     $ mkdir tmp; cd tmp; tar xvf path_to_mali-400-userspace.tar
+     $ cp mali/rel-v2017.3/downloads-mali/git2_gitenterprise.xilinx.com.Graphics.mali400-xlnx-userspace.git.tar.gz path_to_your_project/layers/xilinx-zynqmp/downloads
 
-So directly building sato with "bitbake wrlinux-image-glibc-std-sato" will be
-meaningless for graphics output. Here three steps to build it:
-
-  1> Get mali400-xlnx-userspace from the vendor, or you can directly download
-     the tarball if you have the valid account by the link posted in the below
-     part of this section, and then copy it into the following fold:
-
-     $ cp path_to_the_tarball path_to_your_project/layers/xilinx-zynqmp/downloads/git2_gitenterprise.xilinx.com.Graphics.mali400-xlnx-userspace.git.tar.gz
-
-  2> uncomment all lines mentioned above as follows shown("# " removed):
-
-     In the path_to_your_project/layers/xilinx-zynqmp/conf/machine/xilinx-zynqmp.inc
-
-       PREFERRED_PROVIDER_virtual/mesa_xilinx-zynqmp = "mesa-gl"
-       PREFERRED_PROVIDER_virtual/libgl_xilinx-zynqmp = "mesa-gl"
-       PREFERRED_PROVIDER_virtual/libgles1_xilinx-zynqmp = "libmali-xlnx"
-       PREFERRED_PROVIDER_virtual/libgles2_xilinx-zynqmp = "libmali-xlnx"
-       PREFERRED_PROVIDER_virtual/egl_xilinx-zynqmp = "libmali-xlnx"
-
-     In the path_to_your_project/layers/xilinx-zynqmp/templates/default/bsp-pkgs.conf
-
-       PNWHITELIST_wr-xilinx-zynqmp += 'libmali-xlnx'
-
-  3> Launch bitbake to build wrlinux-image-glibc-std-sato with libmali-xlnx
+  2) Launch bitbake to build an image with graphics support
 
      $ cd path_to_your_project
      $ . ./oe-init-build-env
-     $ rm -f conf/wr*
+     $ echo "PREFERRED_PROVIDER_virtual/mesa_xilinx-zynqmp = \"mesa-gl\"" >> conf/local.conf
+     $ echo "PREFERRED_PROVIDER_virtual/libgl_xilinx-zynqmp = \"mesa-gl\"" >> conf/local.conf
+     $ echo "PREFERRED_PROVIDER_virtual/libgles1_xilinx-zynqmp = \"libmali-xlnx\"" >> conf/local.conf
+     $ echo "PREFERRED_PROVIDER_virtual/libgles2_xilinx-zynqmp = \"libmali-xlnx\"" >> conf/local.conf
+     $ echo "PREFERRED_PROVIDER_virtual/egl_xilinx-zynqmp = \"libmali-xlnx\"" >> conf/local.conf
+     $ echo "PNWHITELIST_wr-xilinx-zynqmp += 'libmali-xlnx'" >> conf/local.conf
+     $ rm conf/wr*
      $ bitbake wrlinux-image-glibc-std-sato
 
 Here is the download website for the libmali-xlnx binary libs:

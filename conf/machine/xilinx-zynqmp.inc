@@ -31,9 +31,3 @@ XSERVER ?= "xserver-xorg \
 	   matchbox-wm"
 
 PREFERRED_VERSION_linux-yocto ?= "4.12%"
-
-# PREFERRED_PROVIDER_virtual/mesa_xilinx-zynqmp = "mesa-gl"
-# PREFERRED_PROVIDER_virtual/libgl_xilinx-zynqmp = "mesa-gl"
-# PREFERRED_PROVIDER_virtual/libgles1_xilinx-zynqmp = "libmali-xlnx"
-# PREFERRED_PROVIDER_virtual/libgles2_xilinx-zynqmp = "libmali-xlnx"
-# PREFERRED_PROVIDER_virtual/egl_xilinx-zynqmp = "libmali-xlnx"
