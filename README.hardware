@@ -123,6 +123,10 @@ following link:
 
   http://www.wiki.xilinx.com/ZynqMP+Linux+PCIe+Root+Port
 
+As mentioned in this website, NVMe SSD and TIGON3 have been validated. It is not
+recommended to use other PCIe devices(Not mentioned in this website) because it
+might bring the board with a little electrical unstability on ZCU102 Rev 1.0.
+
 4.4 DisplayPort
 ---------------
 
@@ -187,7 +191,20 @@ meaningless for graphics output. Here three steps to build it:
 Here is the download website for the libmali-xlnx binary libs:
   http://www.xilinx.com/products/design-tools/embedded-software/petalinux-sdk/arm-mali-400-software-download.html
 
-4.6 Hardware features fanned out from PL
+4.6 Sata notes
+--------------
+
+When your sata harddisk data is corrupted, the system might report a hard link
+reset, then try the following command:
+
+     $ echo "- - -" > /sys/class/scsi_host/host1/scan
+       ata2: hard resetting link
+       ata2: SATA link down (SStatus 0 SControl 330)
+       ata2: EH complete
+
+And mkfs a new filesystem on your hard disk partition.
+
+4.7 Hardware features fanned out from PL
 ----------------------------------------
 
 Most of these features are not validated since they need a special TRD firmware
