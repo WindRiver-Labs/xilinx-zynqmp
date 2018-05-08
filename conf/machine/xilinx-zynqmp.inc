@@ -12,7 +12,12 @@ KERNEL_DEVICETREE_xilinx-zynqmp = "xilinx/zynqmp-zcu102-rev1.0.dtb"
 
 SERIAL_CONSOLE = "115200 ttyPS0"
 
-IMAGE_FSTYPES += "tar.bz2"
+IMAGE_FSTYPES += "tar.bz2 wic wic.bmap"
+WKS_FILE ?= "zynqmp-sdimage.wks"
+IMAGE_INSTALL_append = " kernel-devicetree kernel-image-image"
+do_image_wic[depends] += "mtools-native:do_populate_sysroot dosfstools-native:do_populate_sysroot"
+IMAGE_BOOT_FILES ?= " Image zynqmp-zcu102-rev1.0.dtb"
+
 
 # multilib support
 MULTILIBS ?= "multilib:lib32"
