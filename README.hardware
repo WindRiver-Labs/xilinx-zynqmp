@@ -102,7 +102,7 @@ in a different environment it may possibly have some issues.
 	Processor:              ZYMQMP (410fd034 revision 4, Chip ID: xczu9eg)
 	Board Revision:	        Rev 1.0
 	BootLoader:             U-Boot
-	BootLoader Version:     U-Boot 2017.01 (Apr 25 2017 - 03:56:44 -0600)
+	BootLoader Version:     U-Boot 2017.01
 
 4.2 USB OTG
 -----------

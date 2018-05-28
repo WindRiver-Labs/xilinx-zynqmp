@@ -75,15 +75,11 @@ directory after building a project, or you can generate it manually with the
 following commands:
 
         # bitbake -c devshell virtual/kernel
-        # make zynqmp-<Board Name>.dtb
-
-You can create and edit your own DTS using a command similar to:
-
         # vim arch/arm64/boot/dts/xilinx/the_file_you_edit*.dts
 	# make xilinx/zynqmp-zcu102-rev1.0.dtb
 
 The resulting DTB file can be found here:
-path_to_project/build/linux-windriver/linux-<board>-<kernel type>-build/arch/arm64/boot/dts/xilinx/
+path_to_project/build/tmp-glibc/work/<bsp name>-wrs-linux/linux-yocto/<kernel version>/linux-<bsp name>-<kernel type>-build/arch/arm64/boot/dts/xilinx/
 
 Assuming all files can be downloaded from a network, deploy your board and host
 properly to ensure your network is available from the board.
@@ -110,7 +106,7 @@ to generate the jffs2 boot image and enable the necessary kernel options:
         IMAGE_FSTYPES="jffs2"
 
 Start menuconfig and enable flash filesystem support:
-        # bitbake -c menuconfig linux-windriver
+        # bitbake -c menuconfig linux-yocto
 You will find flash under the Filesystems section of menuconfig.
 
 
