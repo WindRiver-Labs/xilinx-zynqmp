@@ -128,7 +128,7 @@ get this information by running 'cat /proc/mtd' on your target.
 
 After loading the kernel, pass kernel arguments as shown:
 
-	root=/dev/mtdblockx rw rootfstype=jffs2 console=ttyPS0,115200 earlycon=cdns,mmio,0xFF000000,115200n8
+	root=/dev/mtdblockx rw rootfstype=jffs2 console=ttyPS0,115200 earlycon=cdns,mmio,0xFF000000,115200n8 clk_ignore_unused
 
 4.2 Boot from SD card
 ---------------------
@@ -152,7 +152,7 @@ bootable card. Deploy the kernel image, DTB image and file system image as follo
 
 Run the following command to load the kernel image and DTB image:
 
-	=> setenv bootargs console=ttyPS0,115200 root=/dev/mmcblk0p2 rw rootwait earlycon=cdns,mmio,0xFF000000,115200n8
+	=> setenv bootargs console=ttyPS0,115200 root=/dev/mmcblk0p2 rw rootwait earlycon=cdns,mmio,0xFF000000,115200n8 clk_ignore_unused
 	=> mmc rescan
 	=> fatload mmc 0 0x10000000 Image
 	=> fatload mmc 0 0x11800000 zynqmp-zcu102-rev1.0.dtb
@@ -313,3 +313,10 @@ lib32-wrlinux-image-glibc-std-sato can be built and boot, but the graphics
 output will not be available since the related graphics libs elg libgles1,
 and libgles2 provided by libmali-xlnx can not be re-built into lib32 mode
 because of its binary-provider only.
+
+10 Kernel commandline settings
+==============================
+
+As observed from the rev1.0 and rev1.1 board, "clk_ignore_unused" is a mandatory
+set in kernel commandline, which also shown in zynqmp BSP setting on both vendor
+SDK 2017.4 and 2018.1, otherwise it might incur the sudden crash.
