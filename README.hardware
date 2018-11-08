@@ -21,15 +21,7 @@ This BSP supports the following boards:
 2. Change History
 =================
 
-  - 2016/12 (US88597): WRLinux 9.0,  standard and preempt-rt support
-		Add the basic support for ZYNQMP ZCU102 based on 2016.02
-  - 2017/02 (US93750): Update to SDK 2016.04
-  - 2017/12 (US104834): Wind River Linux 9.0 RCPL13: upgrade to align to
-			xilinx-sdk-2017-01
-  - 2018/02 (US107619): Wind River Linux 9.0 RCPL14: upgrade to
-			xilinx-sdk-2017-03 and add graphic support
-  - 2018/05 (US107241): RCPL-10.17.41.7: Based on SDK2017.04 and Rev 1.0
-  - 2018/12 (US119240): Wind River Linux 10.17.41 RCPL13: add preempt-rt support
+  - 2018/12 (US120128): Wind River Linux 10.18 RCPL03: Add BSP support for ZYNQMP ZCU102 based on xilinx-sdk-2018.02
 
 
 3. BSP Features
@@ -119,7 +111,7 @@ to the following link:
 4.3 PCIe
 --------
 
-Only some limited PCIe devices were supported based on the SDK2017.04 and the
+Only some limited PCIe devices were supported based on the SDK2018.02 and the
 following link:
 
   http://www.wiki.xilinx.com/ZynqMP+Linux+PCIe+Root+Port
@@ -157,7 +149,7 @@ vendor and acquire the mali400-xlnx-userspace components.
   1) Extract the components and make them available into the build environment
 
      $ mkdir tmp; cd tmp; tar xvf path_to_mali-400-userspace.tar
-     $ cp mali/rel-v2017.3/downloads-mali/git2_gitenterprise.xilinx.com.Graphics.mali400-xlnx-userspace.git.tar.gz path_to_your_project/layers/xilinx-zynqmp/downloads
+     $ cp mali/rel-v2017.3/downloads-mali/git2_gitenterprise.xilinx.com.Graphics.mali400-xlnx-userspace.git.tar.gz path_to_your_project/layers/xilinx-zynqmp-dl/downloads
 
   2) Launch bitbake to build an image with graphics support
 

@@ -7,11 +7,13 @@ require conf/machine/include/arm/arch-armv8.inc
 MACHINE_FEATURES += "ext3 pci usbgadget usbhost vfat keyboard screen network"
 DISTRO_FEATURES_remove = " wayland"
 
-KERNEL_IMAGETYPE = "Image"
-KERNEL_DEVICETREE_xilinx-zynqmp = "xilinx/zynqmp-zcu102-rev1.0.dtb"
+KERNEL_IMAGETYPE = ""
+KERNEL_IMAGETYPES = "Image.gz Image"
+KERNEL_DEVICETREE = "xilinx/zynqmp-zcu102-rev1.0.dtb xilinx/zynqmp-zcu102-fpga-update.dtb"
 
 SERIAL_CONSOLE = "115200 ttyPS0"
 
+MACHINE_EXTRA_RRECOMMENDS = " kernel-modules kernel-devicetree"
 IMAGE_FSTYPES += "tar.bz2 wic wic.bmap"
 WKS_FILE ?= "zynqmp-sdimage.wks"
 IMAGE_INSTALL_append = " kernel-devicetree kernel-image-image"
@@ -35,4 +37,4 @@ XSERVER ?= "xserver-xorg \
 	   xf86-video-armsoc \
 	   matchbox-wm"
 
-PREFERRED_VERSION_linux-yocto ?= "4.12%"
+PREFERRED_PROVIDER_virtual/kernel ??= "linux-yocto"
