@@ -29,7 +29,7 @@ This BSP supports the following boards:
   - 2018/02 (US107619): Wind River Linux 9.0 RCPL14: upgrade to
 			xilinx-sdk-2017-03 and add graphic support
   - 2018/05 (US107241): RCPL-10.17.41.7: Based on SDK2017.04 and Rev 1.0
-  - 2018/11 (US119240): Wind River Linux 10.17.41 RCPL14: add preempt-rt support
+  - 2018/12 (US119240): Wind River Linux 10.17.41 RCPL13: add preempt-rt support
 
 
 3. BSP Features
