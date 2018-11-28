@@ -306,6 +306,7 @@ It seems mesa-demos are not compatible with libmali-xlnx, so not all test cases
 can be passed, and we'll keep them as-is since debugging binary lib has not too
 much meanings to the end user.
 
+
 9 lib32 note
 ============
 
@@ -314,9 +315,55 @@ output will not be available since the related graphics libs elg libgles1,
 and libgles2 provided by libmali-xlnx can not be re-built into lib32 mode
 because of its binary-provider only.
 
+
 10 Kernel commandline settings
 ==============================
 
 As observed from the rev1.0 and rev1.1 board, "clk_ignore_unused" is a mandatory
 set in kernel commandline, which also shown in zynqmp BSP setting on both vendor
 SDK 2017.4 and 2018.1, otherwise it might incur the sudden crash.
+
+
+11 FPGA Bitstream File Update
+=============================
+On xilinx-zynqmp platform, customer is able to update their own FPGA design image
+from linux side in running time. Detail example as below:
+
+1. Prepare FPGA bitstream file
+Download a xilinx prebuilt bitstream file with below link:
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18842330/Zynq2017.4+Release?preview=/18842330/18845572/2017.4-zcu102-release.tar.xz
+And then, extract the .bit file from package 2017.4-zcu102-release.tar.xz. For example, the bitstream file is system.bit
+
+2. Generate binary file.
+Because xilinx-zynqmp platform only supports binary format for updating FPGA, it is need
+to change the .bit file into binary format with below command:
+ - set environment variable
+ # source xxx/Vivado/Vivado/2017.4/settings64.sh
+
+ - generate the .bin from .bit file using Bootgen
+ # bootgen -image Bitstream.bif -arch zynqmp -process_bitstream bin	(For 2017.4 and earlier releases)
+ or
+ # bootgen -image Bitstream.bif -arch zynqmp -o ./system.bit.bin -w	(For newer releases than 2017.4)
+
+ - Bitstream.bif file content as below:
+ all:
+ {
+	[destination_device = pl] system.bit	/* Bitstream file name */
+ }
+
+ - The output bin file is system.bit.bin
+
+3. Deploy system.bit.bin file in SD card or other storage medium
+
+4. Update FPGA bitstream file
+Boot up kernel and login, then run below command in terminal.
+# echo 0 > /sys/class/fpga_manager/fpga0/flags
+# mkdir -p /lib/firmware
+# cp xxx/system.bit.bin /lib/firmware/system.bit.bin
+# cd /lib/firmware
+# echo system.bit.bin > /sys/class/fpga_manager/fpga0/firmware
+
+Note:
+If customer want to enable new peripherals that reside in the new FPGA bitstream from linux side,
+overlay solution is able to implement the requirement. Detail description, please refer to below link.
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841847/Solution+ZynqMP+PL+Programming#x-Programming+the+PL+through+Linux
