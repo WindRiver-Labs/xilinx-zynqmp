@@ -193,17 +193,5 @@ And mkfs a new filesystem on your hard disk partition.
 
 Most of these features are not validated since they need a special TRD firmware
 bootloader with the related PL bitstream, generally speaking, you can download
-these the specific Xilinx xapp from the vendor website wih your Xilinx account,
+the specific Xilinx xapp from the vendor website with your Xilinx account,
 like xapp1305 for SFP interface.
-
-4.8 SDHC Known Issue
---------------------
-When deploy Swissbit SD card on xilinx-zcu102 board, there will be command timeout issue.
-There is a wrokaround by adding "broken-mmc-highspeed" property in SD card dts node to
-disable the high-speed mode.
-For example:
-&sdhci0 {
-    broken-mmc-highspeed;
-};
-Detail information, please refer to xilinx technical support link as below:
-https://www.xilinx.com/support/answers/69995.html
