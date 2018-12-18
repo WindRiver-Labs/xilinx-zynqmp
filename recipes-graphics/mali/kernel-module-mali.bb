@@ -22,6 +22,11 @@ SRC_URI = " \
 	file://0010-common-mali_pm.c-Add-PM-runtime-barrier-after-removi.patch \
 	file://0011-linux-mali_osk_specific.h-fix-a-wrong-uaccess.h-inde.patch \
 	file://0012-linux-mali_memory.c-uprev-fault-function-to-4.12.patch \
+	file://0013-gpu-mail-400-use-latest-timer-list-API-interface.patch \
+	file://0014-gpu-mail-400-instead-of-global_page_state-with-globa.patch \
+	file://0015-gpu-mail-400-instead-of-__GFP_REPEAT-with-__GFP_RETR.patch \
+	file://0016-gpu-mail-400-remove-__GFP_COLD-flag.patch \
+	file://0017-gpu-mail-400-instead-of-dma-mapping.h-with-dma-direc.patch \
 	"
 SRC_URI[md5sum] = "db3ef3258eb55700484ecadfdce1fee1"
 SRC_URI[sha256sum] = "496ba80684aa4236806891a8445978849f7dd07299f5e58b14d52cd5e7ba0536"

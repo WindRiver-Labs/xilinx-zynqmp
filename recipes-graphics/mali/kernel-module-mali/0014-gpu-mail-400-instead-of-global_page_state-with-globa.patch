@@ -1,0 +1,40 @@
+From f5d6b10289ba3e01203a24316fff7831a16c6714 Mon Sep 17 00:00:00 2001
+From: Limeng <Meng.Li@windriver.com>
+Date: Tue, 18 Dec 2018 15:56:45 +0800
+Subject: [PATCH] gpu: mail-400: instead of global_page_state with
+ global_zone_page_state
+
+According to upstream commit c41f012ade0b("mm: rename
+global_page_state to global_zone_page_state").
+Change global_page_state() into global_zone_page_state().
+
+Signed-off-by: Meng Li <Meng.Li@windriver.com>
+---
+ .../driver/src/devicedrv/mali/linux/mali_memory_swap_alloc.c          | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/linux/mali_memory_swap_alloc.c b/linux/mali_memory_swap_alloc.c
+index 068e4d0..8b70501 100755
+--- a/linux/mali_memory_swap_alloc.c
++++ b/linux/mali_memory_swap_alloc.c
+@@ -248,7 +248,7 @@ static void mali_mem_swap_swapped_bkend_pool_shrink(_mali_mem_swap_pool_shrink_t
+ 	}
+ 
+ 	/* Get system free pages number. */
+-	system_free_size = global_page_state(NR_FREE_PAGES) * PAGE_SIZE;
++	system_free_size = global_zone_page_state(NR_FREE_PAGES) * PAGE_SIZE;
+ 	last_gpu_utilization = _mali_ukk_utilization_gp_pp();
+ 
+ 	if ((last_gpu_utilization < gpu_utilization_threshold_value)
+@@ -576,7 +576,7 @@ int mali_mem_swap_alloc_pages(mali_mem_swap *swap_mem, u32 size, u32 *bkend_idx)
+ 		list_add_tail(&m_page->list, &swap_mem->pages);
+ 	}
+ 
+-	system_free_size = global_page_state(NR_FREE_PAGES) * PAGE_SIZE;
++	system_free_size = global_zone_page_state(NR_FREE_PAGES) * PAGE_SIZE;
+ 
+ 	if ((system_free_size < mali_mem_swap_out_threshold_value)
+ 	    && (mem_backend_swapped_pool_size > (mali_mem_swap_out_threshold_value >> 2))
+-- 
+2.7.4
+
