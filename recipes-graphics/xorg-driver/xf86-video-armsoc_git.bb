@@ -21,3 +21,5 @@ S = "${WORKDIR}/git"
 
 EXTRA_OECONF = " --enable-maintainer-mode"
 CFLAGS += " -I${STAGING_INCDIR}/xorg "
+
+COMPATIBLE_MACHINE = "xilinx-zynqmp"
