@@ -400,3 +400,24 @@ Boot up kernel and login, then run below commands in terminal.
 If customer wants to enable new peripherals that reside in the new FPGA bitstream from linux side,
 overlay solution is able to implement the requirement. Detail description, please refer to below link.
 https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841847/Solution+ZynqMP+PL+Programming#x-Programming+the+PL+through+Linux
+
+
+12. kexec and kdump
+===================
+
+You need to add feature/kexec support as follow:
+
+	./wrlinux-x/setup.sh --machines xilinx-zynqmp --templates feature/kexec,feature/kdump
+
+12.1 kexec
+---------
+
+	kexec -l  /root/Image.gz --append="`cat /proc/cmdline`"
+	kexec -e
+
+12.2 kdump
+---------
+
+Add crashkernel=512M@512M to the kernel cmdline
+   kexec -p /root/Image.gz -append="$your-bootcmd"
+   echo c > /proc/sysrq-trigger
