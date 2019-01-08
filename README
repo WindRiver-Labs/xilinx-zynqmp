@@ -421,3 +421,17 @@ You need to add feature/kexec support as follow:
 Add crashkernel=512M@512M to the kernel cmdline
    kexec -p /root/Image.gz -append="$your-bootcmd"
    echo c > /proc/sysrq-trigger
+
+
+13. suspend/resume
+==================
+
+"Suspend-To-RAM" is supportted by running below command:
+
+	# echo mem > /sys/power/state
+
+Wakeup system, customer can use network, rtc, console and so on, it depends on concrete scenario.
+Below is an example of wakeing up by console.
+Run below command before entering suspend status.
+	# echo enabled > /sys/devices/platform/amba/ff000000.serial/tty/ttyPS0/power/wakeup
+And then, press Enter key in console window.
