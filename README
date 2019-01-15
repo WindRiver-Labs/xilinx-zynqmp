@@ -435,3 +435,13 @@ Below is an example of wakeing up by console.
 Run below command before entering suspend status.
 	# echo enabled > /sys/devices/platform/amba/ff000000.serial/tty/ttyPS0/power/wakeup
 And then, press Enter key in console window.
+
+14. System Monitor
+==================
+
+System monitor includes PL monitor and PS monitor.
+Each system monitor measures voltage and temperature to provide information and alarms
+to other parts of the system including the PMU, RPU, and APU processors.
+
+Customer could check the detail system monitor interfaces with below command:
+	# ls -la /sys/bus/iio/devices/iio:device0
