@@ -95,7 +95,7 @@ in a different environment it may possibly have some issues.
 	Processor:              ZYMQMP (410fd034 revision 4, Chip ID: xczu9eg)
 	Board Revision:	        Rev 1.0
 	BootLoader:             U-Boot
-	BootLoader Version:     U-Boot 2017.01
+	BootLoader Version:     U-Boot 2018.01
 
 4.2 USB OTG
 -----------
@@ -118,7 +118,7 @@ following link:
 
 As mentioned in this website, NVMe SSD and TIGON3 have been validated. It is not
 recommended to use other PCIe devices(Not mentioned in this website) because it
-might bring the board with a little electrical unstability on ZCU102 Rev 1.0.
+might bring the board with a little electrical instability on ZCU102 Rev 1.0.
 
 4.4 DisplayPort
 ---------------
@@ -134,7 +134,7 @@ monitor through a DP cable.
 
 3D-graphics apps calls Mali-libs API(libmali-xlnx) to drive the Mali400 GPU
 directly by Mali400 kernel driver.
-Some of mesa-demos tests cases can be used to validate this function limitly,
+Some of mesa-demos tests cases can be used to validate this function under limitation,
 but we just keep this part as-is without further debugging since only binary
 libs are available.
 
@@ -170,7 +170,7 @@ Here is the download website for the libmali-xlnx binary libs:
 4.6 Sata notes
 --------------
 
-When your sata harddisk data is corrupted, the system might report a hard link
+When your SATA hard disk data is corrupted, the system might report a hard link
 reset, then try the following command:
 
      $ echo "- - -" > /sys/class/scsi_host/host1/scan

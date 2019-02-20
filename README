@@ -30,7 +30,7 @@ Copyright (C) 2018 Wind River Systems, Inc.
 
 The right to copy, distribute or otherwise make use of this software may
 be licensed only pursuant to the terms of an applicable Wind River license
-agreement. No license to Wind River intellectual properly rights is granted
+agreement. No license to Wind River intellectual property rights is granted
 herein. All rights not licensed by Wind River are reserved by Wind River.
 
 Source code included in tree for individual recipes is under the LICENSE
@@ -180,7 +180,7 @@ image on a SD card. It generates partitioned images from existing OpenEmbedded
 build artifacts. Please refer to the following URL for more detailed partition
 information about WIC:
 
-http://www.yoctoproject.org/docs/2.2/mega-manual/mega-manual.html#creating-partitioned-images
+https://www.yoctoproject.org/docs/2.6/mega-manual/mega-manual.html#creating-partitioned-images-using-wic
 
 After having built your project, a partitioned WIC image will be created in the
 deploy folder as follows:
@@ -204,7 +204,7 @@ images, the second is the related root file system.
    $ cp -r path_to_your_bootloader/BOOT.BIN path_to_sdx1
    $ sync; sudo umount path_to_sdx1
 
-6.2 boot the board from the WIC SD card
+6.2 Boot the board from the WIC SD card
 ---------------------------------------
 
 Insert the SD card into the board and power on, then set the proper u-boot
@@ -227,7 +227,7 @@ information.
 8. DP monitor operations
 ========================
 
-8.1 Show and adjust screen resolution, some draw exmaples
+8.1 Show and adjust screen resolution, some draw examples
 ---------------------------------------------------------
    root@xilinx-zynqmp:~# export DISPLAY=:0.0
    root@xilinx-zynqmp:~# xrandr
@@ -322,11 +322,11 @@ and libgles2 provided by libmali-xlnx can not be re-built into lib32 mode
 because of its binary-provider only.
 
 
-10 Kernel commandline settings
+10 Kernel command line settings
 ==============================
 
 As observed from the rev1.0 and rev1.1 board, "clk_ignore_unused" is a mandatory
-set in kernel commandline, which also shown in zynqmp BSP setting on both vendor
+set in kernel command line, which also shown in zynqmp BSP setting on both vendor
 SDK 2017.4 and 2018.1, otherwise it might incur the sudden crash.
 
 
@@ -418,8 +418,8 @@ You need to add feature/kexec support as follow:
 12.2 kdump
 ---------
 
-Add crashkernel=512M@512M to the kernel cmdline
-   kexec -p /root/Image.gz -append="$your-bootcmd"
+Add crashkernel=512M to the kernel cmdline
+   kexec -p /root/Image.gz --append="$your-bootcmd"
    echo c > /proc/sysrq-trigger
 
 
