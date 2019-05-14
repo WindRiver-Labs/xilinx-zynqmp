@@ -282,6 +282,8 @@ When build xilinx-zynqmp BSP project with secure boot layer, the kernel image ty
 includes dtb and kernel image. They are all signed by the private key of a RSA-2048 key that is in
 <path_to_project>/layers/xilinx-zynqmp/zynqmp-secure-boot/fitImgae-rsa2048-keys
 
+The secure boot layer is an internal layer only for BSP xilinx-zynqmp, it doesn't support to add
+this layer with --layer option during setup project.
 
 8.2 Boot fitImage
 -----------------
