@@ -323,7 +323,7 @@ like the following:
 [2] https://www.xilinx.com/html_docs/registers/ug1087/ug1087-zynq-ultrascale-registers.html
 [3] https://www.xilinx.com/support/documentation/user_guides/ug1085-zynq-ultrascale-trm.pdf
 [4] https://www.xilinx.com/support/documentation/user_guides/ug1137-zynq-ultrascale-mpsoc-swdev.pdf
-[5] https://www.xilinx.com/support/documentation/user_guides/xapp1319-zynq-usp-prog-nvm.pdf
+[5] https://www.xilinx.com/support/documentation/application_notes/xapp1319-zynq-usp-prog-nvm.pdf
 [6] https://www.xilinx.com/support/documentation-navigation/design-hubs/dh0070-zynq-mpsoc-design-overview-hub.html
 [7] https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/embedded-design-tools.html
 [8] https://github.com/Xilinx/u-boot-xlnx  //The fitImage-related docs in path_to_u-boot-xlnx/doc
