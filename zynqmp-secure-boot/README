@@ -77,9 +77,9 @@ Secure boot encryption and signature overview chart for zynqmp platform as below
   +------------+                *    			    Finally boot up WRL kernel
        ^
        |
-(RSA2048 public key in u-boot,
+(RSA2048/RSA4096 public key in u-boot,
 which is used to verify the signed
-fitImage with RSA2048 private key)
+fitImage with RSA2048/RSA4096 private key)
 
 
 4. CSU Introduction
@@ -213,7 +213,7 @@ So far, there are all the related files as below to generate BOOT.bin.
 	pmufw.elf	//The PMU firmware
 	system.bit	//The FPGA bit stream
 	bl31.elf	//The arm trust firmware
-	u-boot.elf	//The u-boot with the public key of RSA-2048 key.
+	u-boot.elf	//The u-boot with the public key of RSA-2048/RSA-4096 key.
 
 Put the above files into the same directory, and run below command to create BOOT.BIN.
 Note: Please ensure the necessary environment is set in current terminal windows.
@@ -231,8 +231,8 @@ refer to [5].
 7. A verifiable fitimage
 ========================
 
-u-boot uses rsa2048 cryptographic algorithms to 'sign' software images.
-Images are signed with a private key of the ras2048 key pair that is only
+u-boot uses rsa2048/rsa4096 cryptographic algorithms to 'sign' software images.
+Images are signed with a private key of the ras2048/rsa4096 key pair that is only
 owned by the signer, but can be verified by anyone who has the public key.
 In wrlinux, the fitImage is signed with private key during building linux-yocto kernel.
 The public key is combined with u-boot.dtb that is in the final image u-boot.elf.
@@ -243,24 +243,28 @@ The signature and verification process as follows:
       =======                                      ============
 
  +--------------+                   *
- | 2048 RSA     |                   *             +---------------+
+ | 2048/4096 RSA|                   *             +---------------+
  | key pair     |                   *             | Public key in |
  +--------------+       +------> Public key ----->| trusted u-boot|
         |               |           *             +---------------+
         |               |           *                    |
         v               |           *                    v
-   +---------+          |           *             +--------------+
-   |         |----------+           *             |u-boot verify |
-   | Signer  |                      *             |the fitImage  |
-   |         |----------+           *             |signed with   |--> yes/no
-   +---------+          |           *             |the rsa2048   |
-        ^               |           *             |private key   |
-        |               |           *             +--------------+
+   +---------+          |           *             +---------------+
+   |         |----------+           *             |u-boot verify  |
+   | Signer  |                      *             |the fitImage   |
+   |         |----------+           *             |signed with the|--> yes/no
+   +---------+          |           *             |rsa2048/rsa4096|
+        ^               |           *             |private key    |
+        |               |           *             +---------------+
         |               |           *                    ^
    +----------+         |           *                    |
    | Software |         +----> Signed fitImage ----------+
    |  image   |                     *
    +----------+                     *
+
+Note:
+ - To sign kernel image, Xilinx secure boot feature supports rsa2048 and rsa4096 key type.
+   Set KERNEL_RAS_TYPE as the expected value. The default one is rsa2048.
 
 
 8. Enable secure boot for BSP xilinx-zynqmp
@@ -279,8 +283,9 @@ Detail steps as below:
 
 Note:
 When build xilinx-zynqmp BSP project with secure boot layer, the kernel image type is fitImage that
-includes dtb and kernel image. They are all signed by the private key of a RSA-2048 key that is in
-<path_to_project>/layers/xilinx-zynqmp/zynqmp-secure-boot/fitImgae-rsa2048-keys
+includes dtb and kernel image. They are all signed by the private key of a RSA-2048/RSA-4096 key that is in
+<path_to_project>/layers/xilinx-zynqmp/zynqmp-secure-boot/fitImage-rsa2048-keys and
+<path_to_project>/layers/xilinx-zynqmp/zynqmp-secure-boot/fitImage-rsa4096-keys
 
 The secure boot layer is an internal layer only for BSP xilinx-zynqmp, it doesn't support to add
 this layer with --layer option during setup project.
