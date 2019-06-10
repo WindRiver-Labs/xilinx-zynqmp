@@ -275,7 +275,7 @@ Detail steps as below:
 	$ source ./environment-setup-x86_64-wrlinuxsdk-linux
 	$ source ./oe-init-build-env
 	$ bitbake-layers add-layer <path_to_project>/layers/xilinx-zynqmp/zynqmp-secure-boot
-	$ bitbake wrlinux-image-glibc-std
+	$ bitbake wrlinux-image-std
 
 Note:
 When build xilinx-zynqmp BSP project with secure boot layer, the kernel image type is fitImage that
