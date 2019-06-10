@@ -120,7 +120,7 @@ RSA key pair and assemble your own zynqmp BOOT.BIN by bootgen command.
 -----------------------------------------
 Set environment with below command:
 
-   $ source path_to_vivado/Vivado/2018.2/settings64.sh
+   $ source <path_to_XSDK>/settings64.sh
 
 After setting environment, customer is able to generate RSA 4096 key pairs
 and BOOT.bin according to the doc [4], [5] and [9].
@@ -184,7 +184,7 @@ Detail steps as below:
 	$ cd arm-trusted-firmware
 	$ git branch xilinx-v2018.3 xilinx-v2018.3
 	$ git checkout xilinx-v2018.3
-	$ export CROSS_COMPILE=<patch_to_toolchain>/gcc-linaro-7.2.1-2017.11-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+	$ export CROSS_COMPILE=<path_to_toolchain>/aarch64-linux-gnu-
 	$ export ARCH=aarch64
 	$ make realclean
 	$ make PLAT=zynqmp clean
@@ -314,7 +314,7 @@ key stored in boot header) is validated currently.
 
 Risks warning from UG1085, once program efuse wrongly, the board might enter
 into a secure lockdown state if SEC_LK is programmed into eFuse. Please refer
-to Chapter 8, 11, and 12 for more security related information.
+to Chapter 8, 11, and 12 in [3] for more security related information.
 
 Not all secure function modules are validated due to hardware resource issue,
 like the following:
