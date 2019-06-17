@@ -352,8 +352,8 @@ from linux side in running time. Detail example as below:
 11.1. Prepare FPGA bitstream file
 ---------------------------------
 Download a xilinx prebuilt bitstream file with below link:
-https://www.xilinx.com/member/forms/download/xef.html?filename=2018.2-zcu102-release.tar.xz
-Then, extract the .bit file from package 2018.2-zcu102-release.tar.xz and rename it into system.bit
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/135364615/Zynq+2019.1+Release
+Then, extract the .bit file from package 2019.1-zcu102-release.tar.xz and rename it into system.bit
 
 11.2. Generate binary file
 --------------------------

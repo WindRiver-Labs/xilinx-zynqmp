@@ -174,8 +174,8 @@ To create PMU firmware, please refer to section
 [Create PMU Firmware for Platform Management Unit] in [9]
 
 5.2.3 Get FPGA bit stream file
-Download 2018.3-zcu102-release.tar.xz from below link:
-https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/57639129/Zynq+2018.3+Release
+Download 2019.1-zcu102-release.tar.xz from below link:
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/135364615/Zynq+2019.1+Release
 And then get the system.bit file from the release package.
 
 5.2.4 Build the arm trust firmware
