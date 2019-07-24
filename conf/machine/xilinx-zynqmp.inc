@@ -24,3 +24,5 @@ IMAGE_BOOT_FILES ?= " Image zynqmp-zcu102-rev1.0.dtb "
 # multilib support
 MULTILIBS ?= "multilib:lib32"
 DEFAULTTUNE_virtclass-multilib-lib32 ?= "armv7athf-neon"
+
+XSERVER_append += "xf86-video-armsoc"
