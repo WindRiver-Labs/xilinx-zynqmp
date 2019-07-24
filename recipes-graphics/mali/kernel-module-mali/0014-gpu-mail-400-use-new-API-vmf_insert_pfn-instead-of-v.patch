@@ -1,0 +1,132 @@
+From 7f9f4dd11cad70dc76cf8191a834682bbec74916 Mon Sep 17 00:00:00 2001
+From: Wang Quanyang <quanyang.wang@windriver.com>
+Date: Tue, 23 Jul 2019 23:01:39 -0400
+Subject: [PATCH] gpu: mail-400: use new API vmf_insert_pfn instead of
+ vm_insert_pfn
+
+Because of upstream ae2b01f37044 ("mm: remove vm_insert_pfn"), use use new API
+vmf_insert_pfn instead of vm_insert_pfn.
+
+Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
+---
+ linux/mali_memory_block_alloc.c |  4 ++--
+ linux/mali_memory_cow.c         | 10 +++++-----
+ linux/mali_memory_os_alloc.c    | 12 ++++++------
+ linux/mali_memory_secure.c      |  4 ++--
+ 4 files changed, 15 insertions(+), 15 deletions(-)
+ mode change 100755 => 100644 linux/mali_memory_os_alloc.c
+ mode change 100755 => 100644 linux/mali_memory_secure.c
+
+diff --git a/linux/mali_memory_block_alloc.c b/linux/mali_memory_block_alloc.c
+index c6ffd40..1aa3dfb 100644
+--- a/linux/mali_memory_block_alloc.c
++++ b/linux/mali_memory_block_alloc.c
+@@ -309,9 +309,9 @@ int mali_mem_block_cpu_map(mali_mem_backend *mem_bkend, struct vm_area_struct *v
+ 
+ 	list_for_each_entry(m_page, &block_mem->pfns, list) {
+ 		MALI_DEBUG_ASSERT(m_page->type == MALI_PAGE_NODE_BLOCK);
+-		ret = vm_insert_pfn(vma, addr, _mali_page_node_get_pfn(m_page));
++		ret = vmf_insert_pfn(vma, addr, _mali_page_node_get_pfn(m_page));
+ 
+-		if (unlikely(0 != ret)) {
++		if (unlikely(VM_FAULT_NOPAGE != ret)) {
+ 			return -EFAULT;
+ 		}
+ 		addr += _MALI_OSK_MALI_PAGE_SIZE;
+diff --git a/linux/mali_memory_cow.c b/linux/mali_memory_cow.c
+index ae417db..71b83d6 100644
+--- a/linux/mali_memory_cow.c
++++ b/linux/mali_memory_cow.c
+@@ -529,12 +529,12 @@ int mali_mem_cow_cpu_map(mali_mem_backend *mem_bkend, struct vm_area_struct *vma
+ 
+ 	list_for_each_entry(m_page, &cow->pages, list) {
+ 		/* We should use vm_insert_page, but it does a dcache
+-		 * flush which makes it way slower than remap_pfn_range or vm_insert_pfn.
++		 * flush which makes it way slower than remap_pfn_range or vmf_insert_pfn.
+ 		ret = vm_insert_page(vma, addr, page);
+ 		*/
+-		ret = vm_insert_pfn(vma, addr, _mali_page_node_get_pfn(m_page));
++		ret = vmf_insert_pfn(vma, addr, _mali_page_node_get_pfn(m_page));
+ 
+-		if (unlikely(0 != ret)) {
++		if (unlikely(VM_FAULT_NOPAGE != ret)) {
+ 			return ret;
+ 		}
+ 		addr += _MALI_OSK_MALI_PAGE_SIZE;
+@@ -569,9 +569,9 @@ _mali_osk_errcode_t mali_mem_cow_cpu_map_pages_locked(mali_mem_backend *mem_bken
+ 
+ 	list_for_each_entry(m_page, &cow->pages, list) {
+ 		if ((count >= offset) && (count < offset + num)) {
+-			ret = vm_insert_pfn(vma, vaddr, _mali_page_node_get_pfn(m_page));
++			ret = vmf_insert_pfn(vma, vaddr, _mali_page_node_get_pfn(m_page));
+ 
+-			if (unlikely(0 != ret)) {
++			if (unlikely(VM_FAULT_NOPAGE != ret)) {
+ 				if (count == offset) {
+ 					return _MALI_OSK_ERR_FAULT;
+ 				} else {
+diff --git a/linux/mali_memory_os_alloc.c b/linux/mali_memory_os_alloc.c
+old mode 100755
+new mode 100644
+index e683ee2..0b8c4e3
+--- a/linux/mali_memory_os_alloc.c
++++ b/linux/mali_memory_os_alloc.c
+@@ -370,13 +370,13 @@ int mali_mem_os_cpu_map(mali_mem_backend *mem_bkend, struct vm_area_struct *vma)
+ 
+ 	list_for_each_entry(m_page, &os_mem->pages, list) {
+ 		/* We should use vm_insert_page, but it does a dcache
+-		 * flush which makes it way slower than remap_pfn_range or vm_insert_pfn.
++		 * flush which makes it way slower than remap_pfn_range or vmf_insert_pfn.
+ 		ret = vm_insert_page(vma, addr, page);
+ 		*/
+ 		page = m_page->page;
+-		ret = vm_insert_pfn(vma, addr, page_to_pfn(page));
++		ret = vmf_insert_pfn(vma, addr, page_to_pfn(page));
+ 
+-		if (unlikely(0 != ret)) {
++		if (unlikely(VM_FAULT_NOPAGE != ret)) {
+ 			return -EFAULT;
+ 		}
+ 		addr += _MALI_OSK_MALI_PAGE_SIZE;
+@@ -412,9 +412,9 @@ _mali_osk_errcode_t mali_mem_os_resize_cpu_map_locked(mali_mem_backend *mem_bken
+ 
+ 			vm_end -= _MALI_OSK_MALI_PAGE_SIZE;
+ 			if (mapping_page_num > 0) {
+-				ret = vm_insert_pfn(vma, vm_end, page_to_pfn(m_page->page));
++				ret = vmf_insert_pfn(vma, vm_end, page_to_pfn(m_page->page));
+ 
+-				if (unlikely(0 != ret)) {
++				if (unlikely(VM_FAULT_NOPAGE != ret)) {
+ 					/*will return -EBUSY If the page has already been mapped into table, but it's OK*/
+ 					if (-EBUSY == ret) {
+ 						break;
+@@ -435,7 +435,7 @@ _mali_osk_errcode_t mali_mem_os_resize_cpu_map_locked(mali_mem_backend *mem_bken
+ 		list_for_each_entry(m_page, &os_mem->pages, list) {
+ 			if (count >= offset) {
+ 
+-				ret = vm_insert_pfn(vma, vstart, page_to_pfn(m_page->page));
++				ret = vmf_insert_pfn(vma, vstart, page_to_pfn(m_page->page));
+ 
+ 				if (unlikely(0 != ret)) {
+ 					/*will return -EBUSY If the page has already been mapped into table, but it's OK*/
+diff --git a/linux/mali_memory_secure.c b/linux/mali_memory_secure.c
+old mode 100755
+new mode 100644
+index d235fcf..7110c19
+--- a/linux/mali_memory_secure.c
++++ b/linux/mali_memory_secure.c
+@@ -128,9 +128,9 @@ int mali_mem_secure_cpu_map(mali_mem_backend *mem_bkend, struct vm_area_struct *
+ 		MALI_DEBUG_ASSERT(0 == size % _MALI_OSK_MALI_PAGE_SIZE);
+ 
+ 		for (j = 0; j < size / _MALI_OSK_MALI_PAGE_SIZE; j++) {
+-			ret = vm_insert_pfn(vma, addr, PFN_DOWN(phys));
++			ret = vmf_insert_pfn(vma, addr, PFN_DOWN(phys));
+ 
+-			if (unlikely(0 != ret)) {
++			if (unlikely(VM_FAULT_NOPAGE != ret)) {
+ 				return -EFAULT;
+ 			}
+ 			addr += _MALI_OSK_MALI_PAGE_SIZE;
+-- 
+2.22.0
+

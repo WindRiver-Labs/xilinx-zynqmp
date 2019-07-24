@@ -1,0 +1,30 @@
+From 3a6b1a9d6417b4b1653cf7c3055a03e2943d459c Mon Sep 17 00:00:00 2001
+From: Limeng <Meng.Li@windriver.com>
+Date: Tue, 18 Dec 2018 17:11:09 +0800
+Subject: [PATCH] gpu: mail-400: instead of dma-mapping.h with dma-direct.h
+
+According to upstream commit ea8c64ace866("dma-mapping: move
+swiotlb arch helpers to a new header").
+Include dma-direct.h rather than dma-mapping.h.
+
+Signed-off-by: Meng Li <Meng.Li@windriver.com>
+---
+ .../driver/src/devicedrv/mali/linux/mali_memory_secure.c                | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/linux/mali_memory_secure.c b/linux/mali_memory_secure.c
+index 7856ae6..1e78b70 100755
+--- a/linux/mali_memory_secure.c
++++ b/linux/mali_memory_secure.c
+@@ -13,7 +13,7 @@
+ #include "mali_memory_secure.h"
+ #include "mali_osk.h"
+ #include <linux/mutex.h>
+-#include <linux/dma-mapping.h>
++#include <linux/dma-direct.h>
+ #include <linux/dma-buf.h>
+ 
+ _mali_osk_errcode_t mali_mem_secure_attach_dma_buf(mali_mem_secure *secure_mem, u32 size, int mem_fd)
+-- 
+2.7.4
+
