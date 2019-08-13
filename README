@@ -138,7 +138,79 @@ Run the following command to load the kernel image and DTB image:
 	=> setenv bootargs console=ttyPS0,115200 earlycon=cdns,mmio,0xFF000000 clk_ignore_unused root=/dev/nfs rw nfsroot=serverip:path_root_rootfs ip=dhcp
 	=> tftpboot 0x10000000 Image; tftpboot 0x11800000 dtb; booti 0x10000000 - 0x11800000
 
-5. WIC Notes
+5. Features
+===========
+
+5.1 CAN
+-------
+
+# configure can0 in the speed of 800000
+   $ ip link set can0 up type can bitrate 800000
+   $ ip -details link show can0
+
+# send out a single frame
+   $ cansend can0 1F334455#1122334455667788
+   $ ip link set can0 down
+
+5.2 DP monitor operations
+-------------------------
+
+5.2.1 Show and adjust screen resolution, some draw examples
+   root@xilinx-zynqmp:~# export DISPLAY=:0.0
+   root@xilinx-zynqmp:~# xrandr
+   Screen 0: minimum 320 x 200, current 1024 x 768, maximum 4096 x 4096
+   DP-1 connected primary 1024x768+0+0 518mm x 324mm
+      1920x1080     24.00    23.98
+      1280x720      60.00    50.00    59.94
+      1024x768      75.03*   60.00
+      800x600       75.00    60.32
+      720x576       50.00
+      720x480       60.00    59.94
+      640x480       75.00    60.00    59.94
+      720x400       70.08
+   root@xilinx-zynqmp:~# xrandr -s 1920x1080
+
+5.2.2 Audio Play
+--------------
+Connect loudspeaker or headset with display monitor, and then run below commands:
+ # aplay -l
+ # speaker-test -c2 -twav
+
+5.3. suspend/resume
+-------------------
+
+"Suspend-To-RAM" is supportted by running below command:
+
+	# echo mem > /sys/power/state
+
+Wakeup system, customer can use network, rtc, console and so on, it depends on concrete scenario.
+Below is an example of wakeing up by console.
+Run below command before entering suspend status.
+	# echo enabled > /sys/devices/platform/amba/ff000000.serial/tty/ttyPS0/power/wakeup
+And then, press Enter key in console window.
+
+6. kexec and kdump
+===================
+
+You need to add feature/kexec support as follow:
+
+	./wrlinux-x/setup.sh --machines xilinx-zynqmp --templates feature/kexec,feature/kdump
+
+6.1 kexec
+---------
+
+	kexec -l  /root/Image.gz --append="`cat /proc/cmdline`"
+	kexec -e
+
+6.2 kdump
+---------
+
+Add crashkernel=512M to the kernel cmdline
+   kexec -p /root/Image.gz --append="$your-bootcmd"
+   echo c > /proc/sysrq-trigger
+
+
+7. WIC Notes
 ============
 
 User can use the OpenEmbedded Image Creator to create the properly partitioned
@@ -156,7 +228,7 @@ deploy folder as follows:
 There are two partitions in this WIC images, the first one is to hold the boot
 images, the second is the related root file system.
 
-5.1 An example to deploy bootloader into the first partition
+7.1 An example to deploy bootloader into the first partition
 ------------------------------------------------------------
 
 1) Deploy the created WIC image into SD card(/dev/sdx) in your host machine.
@@ -170,7 +242,7 @@ images, the second is the related root file system.
    $ cp -r path_to_your_bootloader/BOOT.BIN path_to_sdx1
    $ sync; sudo umount path_to_sdx1
 
-5.2 Boot the board from the WIC SD card
+7.2 Boot the board from the WIC SD card
 ---------------------------------------
 
 Insert the SD card into the board and power on, then set the proper u-boot
@@ -186,3 +258,84 @@ Board can boot automatically by set the below uboot environment variables:
 => setenv bootcmd 'fatload mmc 0:1 $loadaddr $bootfile; fatload mmc 0:1 $fdtaddr $fdtfile; booti $loadaddr - $fdtaddr';
 
 => saveenv; run bootcmd;
+
+8 FPGA Bitstream File Update
+=============================
+On xilinx-zynqmp platform, customer is able to update their own FPGA design image
+from linux side in running time. Detail example as below:
+
+8.1. Prepare FPGA bitstream file
+---------------------------------
+Download a xilinx prebuilt bitstream file with below link:
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/135364615/Zynq+2019.1+Release
+Then, extract the .bit file from package 2019.1-zcu102-release.tar.xz and rename it into system.bit
+
+8.2. Generate binary file
+--------------------------
+Because xilinx-zynqmp platform only supports binary format for updating FPGA, it is need
+to change the .bit file into binary format with below commands:
+ - set environment variable
+ # source xxx/Vivado/Vivado/2017.4/settings64.sh
+
+ - generate the .bin from .bit file using Bootgen
+ # bootgen -image Bitstream.bif -arch zynqmp -process_bitstream bin	(For 2017.4 and earlier releases)
+ or
+ # bootgen -image Bitstream.bif -arch zynqmp -o ./system.bit.bin -w	(For newer releases than 2017.4)
+
+ - Bitstream.bif file content as below:
+ all:
+ {
+	[destination_device = pl] system.bit	/* Bitstream file name */
+ }
+
+ - The output bin file is system.bit.bin
+
+8.3. Deploy required files
+---------------------------
+Deploy system.bit.bin and zynqmp-zcu102-fpga-update.dtb file in SD card or other storage medium.
+The dtb is generated in below directory:
+<ProjectPath>/build/tmp-glibc/work/xilinx_zynqmp-wrs-linux/linux-yocto/<kernel-version>/linux-xilinx_zynqmp-standard-build/arch/arm64/boot/dts/xilinx
+
+8.4. Update FPGA bitstream file
+--------------------------------
+8.4.1 Update FPGA by using device tree overlay
+Boot up kernel and login, then run below commands in terminal.
+1) Set flags for Full Bitstream.
+	# echo 0 > /sys/class/fpga_manager/fpga0/flags
+
+2) Copy the Full Bitstream (.bin) and pl.dtbo files into firmware folder
+	# mkdir -p /lib/firmware
+	# cp xxx/system.bit.bin /lib/firmware/system.bit.bin
+	# cp xxx/zynqmp-zcu102-fpga-update.dtb /lib/firmware/zynqmp-zcu102-fpga-update.dtb
+
+3) Apply overlay DTB(zynqmp-zcu102-fpga-update.dtb) to add live device nodes
+	# mkdir /sys/kernel/config/device-tree/overlays/system
+	# cd /lib/firmware/
+	# echo zynqmp-zcu102-fpga-update.dtb > /sys/kernel/config/device-tree/overlays/system/path
+
+4) Steps to remove device nodes
+	# rmdir /sys/kernel/config/device-tree/overlays/system
+
+8.4.2 Update FPGA by using sysfs interface
+Boot up kernel and login, then run below commands in terminal.
+# echo 0 > /sys/class/fpga_manager/fpga0/flags
+# mkdir -p /lib/firmware
+# cp xxx/system.bit.bin /lib/firmware/system.bit.bin
+# cd /lib/firmware
+# echo system.bit.bin > /sys/class/fpga_manager/fpga0/firmware
+
+8.5 Note
+---------
+If customer wants to enable new peripherals that reside in the new FPGA bitstream from linux side,
+overlay solution is able to implement the requirement. Detail description, please refer to below link.
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841847/Solution+ZynqMP+PL+Programming#x-Programming+the+PL+through+Linux
+
+9. System Monitor
+==================
+
+System monitor includes PL monitor and PS monitor.
+Each system monitor measures voltage and temperature to provide information and alarms
+to other parts of the system including the PMU, RPU, and APU processors.
+
+Customer could check the detail system monitor interfaces with below command:
+	# ls -la /sys/bus/iio/devices/iio:device0
