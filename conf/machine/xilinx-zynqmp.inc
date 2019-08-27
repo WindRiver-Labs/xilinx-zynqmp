@@ -37,3 +37,10 @@ XSERVER ?= "xserver-xorg \
 	   matchbox-wm"
 
 PREFERRED_PROVIDER_virtual/kernel ??= "linux-yocto"
+OSTREE_BOOTLOADER_INCLUDE ?= ""
+OSTREE_SD_UBOOT_WIC1 ?= ""
+OSTREE_SD_BOOT_ALIGN ?= "4096"
+OSTREE_FDISK_BLM ?= "8192"
+OSTREE_FDISK_FSZ ?= "132"
+OSTREE_KERNEL ?= "Image"
+OSTREE_UBOOT_CMD ?= "booti"
