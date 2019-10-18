@@ -262,7 +262,7 @@ Board can boot automatically by set the below uboot environment variables:
 8 FPGA Bitstream File Update
 =============================
 On xilinx-zynqmp platform, customer is able to update their own FPGA design image
-from linux side in running time. Detail example as below:
+from linux side in running time. A simple example as below:
 
 8.1. Prepare FPGA bitstream file
 ---------------------------------
@@ -275,7 +275,7 @@ Then, extract the .bit file from package 2019.1-zcu102-release.tar.xz and rename
 Because xilinx-zynqmp platform only supports binary format for updating FPGA, it is need
 to change the .bit file into binary format with below commands:
  - set environment variable
- # source xxx/Vivado/Vivado/2017.4/settings64.sh
+ # source xxx/Vivado/Vivado/2019.1/settings64.sh
 
  - generate the .bin from .bit file using Bootgen
  # bootgen -image Bitstream.bif -arch zynqmp -process_bitstream bin	(For 2017.4 and earlier releases)
@@ -290,15 +290,43 @@ to change the .bit file into binary format with below commands:
 
  - The output bin file is system.bit.bin
 
-8.3. Deploy required files
----------------------------
-Deploy system.bit.bin and zynqmp-zcu102-fpga-update.dtb file in SD card or other storage medium.
-The dtb is generated in below directory:
-<ProjectPath>/build/tmp-glibc/work/xilinx_zynqmp-wrs-linux/linux-yocto/<kernel-version>/linux-xilinx_zynqmp-standard-build/arch/arm64/boot/dts/xilinx
+8.3. Generate Device Tree Overlay (DTO)
+---------------------------------------
+8.3.1 Create a dtsi file pl.dtsi
+As below is the file contents example:
 
-8.4. Update FPGA bitstream file
+// pl.dtsi overlay dts file.
+/dts-v1/;
+/plugin/;
+
+/ {
+    fragment@0 {
+        target-path = "/fpga-full";
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        __overlay__ {
+            #address-cells = <2>;
+            #size-cells = <2>;
+
+            firmware-name = "system.bit.bin";
+        };
+    };
+};
+
+8.3.2 Create Device Tree Overlay Blob
+We can create Device Tree Overlay Blob (.dtbo) file from
+the pl.dtsi file as below:
+
+dtc -O dtb -o pl.dtbo -b 0 -@ pl.dtsi
+
+8.4. Deploy required files
+--------------------------
+Deploy system.bit.bin and pl.dtbo file in SD card or other storage medium.
+
+8.5. Update FPGA bitstream file
 --------------------------------
-8.4.1 Update FPGA by using device tree overlay
+8.5.1 Update FPGA by using device tree overlay
 Boot up kernel and login, then run below commands in terminal.
 1) Set flags for Full Bitstream.
 	# echo 0 > /sys/class/fpga_manager/fpga0/flags
@@ -306,17 +334,17 @@ Boot up kernel and login, then run below commands in terminal.
 2) Copy the Full Bitstream (.bin) and pl.dtbo files into firmware folder
 	# mkdir -p /lib/firmware
 	# cp xxx/system.bit.bin /lib/firmware/system.bit.bin
-	# cp xxx/zynqmp-zcu102-fpga-update.dtb /lib/firmware/zynqmp-zcu102-fpga-update.dtb
+	# cp xxx/pl.dtbo /lib/firmware/pl.dtbo
 
-3) Apply overlay DTB(zynqmp-zcu102-fpga-update.dtb) to add live device nodes
+3) Apply overlay DTB(pl.dtbo) to add live device nodes
 	# mkdir /sys/kernel/config/device-tree/overlays/system
 	# cd /lib/firmware/
-	# echo zynqmp-zcu102-fpga-update.dtb > /sys/kernel/config/device-tree/overlays/system/path
+	# echo pl.dtbo > /sys/kernel/config/device-tree/overlays/system/path
 
 4) Steps to remove device nodes
 	# rmdir /sys/kernel/config/device-tree/overlays/system
 
-8.4.2 Update FPGA by using sysfs interface
+8.5.2 Update FPGA by using sysfs interface
 Boot up kernel and login, then run below commands in terminal.
 # echo 0 > /sys/class/fpga_manager/fpga0/flags
 # mkdir -p /lib/firmware
@@ -324,7 +352,7 @@ Boot up kernel and login, then run below commands in terminal.
 # cd /lib/firmware
 # echo system.bit.bin > /sys/class/fpga_manager/fpga0/firmware
 
-8.5 Note
+8.6 Note
 ---------
 If customer wants to enable new peripherals that reside in the new FPGA bitstream from linux side,
 overlay solution is able to implement the requirement. Detail description, please refer to below link.
