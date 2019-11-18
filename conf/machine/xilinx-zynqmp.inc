@@ -9,7 +9,7 @@ DISTRO_FEATURES_remove = " wayland"
 
 KERNEL_IMAGETYPE = ""
 KERNEL_IMAGETYPES = " ${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', 'fitImage', 'Image.gz Image', d)}"
-KERNEL_DEVICETREE = "xilinx/zynqmp-zcu102-rev1.0.dtb xilinx/zynqmp-zcu102-fpga-update.dtb"
+KERNEL_DEVICETREE = "xilinx/zynqmp-zcu102-rev1.0.dtb xilinx/zynqmp-zcu102-fpga-update.dtb xilinx/zynqmp-zcu102-rev1.0-canfd.dtb"
 
 SERIAL_CONSOLE = "115200 ttyPS0"
 
