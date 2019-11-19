@@ -459,3 +459,27 @@ to other parts of the system including the PMU, RPU, and APU processors.
 
 Customer could check the detail system monitor interfaces with below command:
 	# ls -la /sys/bus/iio/devices/iio:device0
+
+15. CANFD
+=========
+
+Based on CANFD FPGA LogiCORE IP from Xilinx, there are 2 canfd devices on FPGA side.
+An example is provided to verify can/canfd driver with FMC extend board(https://www.xilinx.com/products/boards-and-kits/1-12nths4.html)
+
+Detail verification commands as below:
+
+	# ip link set can1 up type can bitrate 125000 dbitrate 8000000 fd on
+	# ip link set can2 up type can bitrate 125000 dbitrate 8000000 fd on
+	# candump can1 &
+	# cansend can2 5A1#11.22.33.44.55.66.77.88
+	# ip -d -s link show can1
+	# ip -d -s link show can2
+
+If can1 dump data from can2, CANFD feature works fine.
+
+There is a Xilinx Wiki link as below, it is a CANFD development guide.
+It may offer some help when customer develops CANFD feature on their own platform.
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18842496/Linux+CAN+driver
+
+If customer wants to implement their own or more canfd devices, please connect with
+Xilinx to get professional technical support about how to design CANFD on FPGA side.
