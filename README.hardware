@@ -40,6 +40,7 @@ the corresponding h/w features exist.
 
   o Bus
 	+ CAN: ZynqMP
+	+ CANFD: Based on Xilinx FPGA CANFD logiCORE IP
 	+ I2C: Cadence 
 	+ SPI: ZynqMP
 	+ PCIe: On-Chip PCIe controller
