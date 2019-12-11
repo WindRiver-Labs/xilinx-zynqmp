@@ -375,14 +375,14 @@ Based on CANFD FPGA LogiCORE IP from Xilinx, there are 2 canfd devices on FPGA s
 An example is provided to verify can/canfd driver with Xilinx-zcu102 board(REV 1.0) and
 FMC extend board(https://www.xilinx.com/products/boards-and-kits/1-12nths4.html)
 
-15.1 Boot up system with CANFD specific dtb file
+10.1 Boot up system with CANFD specific dtb file
 ------------------------------------------------
 
 	# fatload mmc 0 0x13000000 zynqmp-zcu102-rev1.0-canfd.dtb
 	or
 	# tftpboot 0x13000000 <tftp server>/zynqmp-zcu102-rev1.0-canfd.dtb
 
-15.2 Verify CANFD
+10.2 Verify CANFD
 -----------------
 
 	Detail verification commands as below:
@@ -402,3 +402,12 @@ https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18842496/Linux+CAN+driver
 
 If customer wants to implement their own or more canfd devices, please connect with
 Xilinx to get professional technical support about how to design CANFD on FPGA side.
+
+11. Multilib
+============
+
+By default, this BSP is configured as a 64-bit kernel and 64-bit userspace.
+If a full 32-bit filesystem is necessary, use the prefix "lib32-" before
+the expected target image as follows:
+
+	# bitbake lib32-wrlinux-image-std
