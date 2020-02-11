@@ -1,0 +1,15 @@
+//arch = zynqmp; split = false; format = BIN
+the_ROM_image:
+{
+	[aeskeyfile] ./aes.nky
+	[keysrc_encryption] efuse_red_key
+	[pskfile] ./psk0.pem
+	[sskfile] ./ssk0.pem
+	[auth_params] ppk_select=0; spk_id=0x12345678
+	[fsbl_config] a53_x64
+	[bootloader, destination_cpu=a53-0, authentication=rsa, encryption=aes] ./fsbl.elf
+	[pmufw_image, authentication=rsa, encryption=aes] ./pmufw.elf
+	[authentication=rsa, encryption=aes] ./system.bit
+	[authentication=rsa, encryption=aes, destination_cpu=a53-0, exception_level=el-3, trustzone] ./bl31.elf
+	[authentication=rsa, encryption=aes, destination_cpu=a53-0, exception_level=el-2] ./u-boot.elf
+}

@@ -1,0 +1,7 @@
+generate_pem:
+{
+	[ppkfile] ./ppk0.pem
+	[pskfile] ./psk0.pem
+	[spkfile] ./spk0.pem
+	[sskfile] ./ssk0.pem
+}
