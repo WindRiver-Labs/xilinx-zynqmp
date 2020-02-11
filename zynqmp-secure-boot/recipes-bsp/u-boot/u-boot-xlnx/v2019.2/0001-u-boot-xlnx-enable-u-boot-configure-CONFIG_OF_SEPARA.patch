@@ -1,0 +1,34 @@
+From a5e80c1f98a59d4a20c3f6625a2faacbdd195080 Mon Sep 17 00:00:00 2001
+From: Limeng <Meng.Li@windriver.com>
+Date: Fri, 12 Apr 2019 22:20:50 +0800
+Subject: [PATCH] u-boot-xlnx: enable u-boot configure for secure boot
+
+Issue: LIN1018-3823
+
+When build fitImage and sign it with RSA private key. The public key
+is saved in u-boot dtb file. So, enable CONFIG_OF_SEPARATE to
+generate u-boot image and dtb separately.
+In addtional, enable CONFIG_FIT_SIGNATURE configure so that execute
+signature verification when boot kernel image.
+
+Signed-off-by: Meng Li <Meng.Li@windriver.com>
+---
+ configs/xilinx_zynqmp_zcu102_rev1_0_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configs/xilinx_zynqmp_zcu102_rev1_0_defconfig b/configs/xilinx_zynqmp_zcu102_rev1_0_defconfig
+index 5448ff4..b674107 100644
+--- a/configs/xilinx_zynqmp_zcu102_rev1_0_defconfig
++++ b/configs/xilinx_zynqmp_zcu102_rev1_0_defconfig
+@@ -54,6 +54,8 @@ CONFIG_CMD_AES=y
+ CONFIG_CMD_UBI=y
+ CONFIG_SPL_OF_CONTROL=y
+ CONFIG_DEFAULT_DEVICE_TREE="zynqmp-zcu102-rev1.0"
++CONFIG_OF_SEPARATE=y
++CONFIG_FIT_SIGNATURE=y
+ CONFIG_ENV_IS_IN_FAT=y
+ CONFIG_NET_RANDOM_ETHADDR=y
+ CONFIG_SPL_DM=y
+-- 
+2.7.4
+
