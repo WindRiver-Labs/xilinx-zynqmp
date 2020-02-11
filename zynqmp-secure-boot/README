@@ -1,0 +1,335 @@
+	Secure Boot High Level Design On Xilinx ZYNQMP Platform
+
+1. About this document
+======================
+This document provides detail description about how to enable secure
+boot on xilinx-zcu102 board. It includes the implementation principles
+of secure boot, implementation example step by step and so on.
+
+Dependencies
+------------
+This layer depends on the xilinx-zynqmp BSP layer supplied by Wind River Linux
+
+
+Maintenance
+-----------
+This layer is maintained by Wind River Systems, Inc.
+Contact <support@windriver.com> or your support representative for more
+information on submitting changes.
+
+
+Building the zynqmp-secure-boot layer
+-------------------------------------
+This layer and xilixn-zynqmp BSP layer should be added to bblayers.conf.
+
+
+2. Preparations & Prerequisites
+===============================
+To use secure boot feature, assume that you are:
+ - Experienced with WRL linux embedded software development
+ - Experienced with Xilinx development tools such as xSDK.
+ - Familiar with ARMv8 and ZynMP SoC architecture.
+ - Familiar with the basic concepts of security, like openssl, authentication,
+   encryption, hardware root trust, RSA, AES, key source, certificate, etc.
+
+Hardware preparations:
+ - A host machine installed with Xilix Design Tool.
+ - A host machine installed with aarch64 cross-compile toolchain.
+ - Xilinx ZynqMP ZCU102 development sets with Silicon version 4.
+
+
+3. WRL ZynqMP Security Introduction & Hardware Root Of Trust Secure Boot
+========================================================================
+
+WRL secure boot on ZynqMP platform includes bootloader(BOOT.BIN) based on the
+hardware root of trust secure boot from Xilinx Zynq MPSoC and verifiable fitImage
+with RSA2048 signature.
+
+Secure boot encryption and signature overview chart for zynqmp platform as below:
+
+ Encryption & signature                           Verification
+ ----------------------                           ------------
+
+ +--------------+               *
+ | AES256 key   |               *                +----------------------+
+ | RSA4096 pair |               *                | Program key & digest |
+ +--------------+   +-> AES key & P-key digest-->| into BBram, eFuse or |
+       |            |           *                | boot header		|
+       |            |           *                +----------------------+
+       |            |           *                       |
+       v            |           *                       v
+   +---------+      |           *                +-------------+
+   | Xilinx  |------+           *                |             |  /-no->lockdown
+   | xSDK    |                  *                | CSU verify  | |
+   | tools   |------+           *                | and decrypt |<
+   +---------+      |           *                | image set   | |
+       ^            |           *                |             |  \-yes->u-boot
+       |            |           *                +-------------+        |
+       |            |           *                       ^               |
+  +-------------+   |           *                       |               |
+  + Image sets  |   +-> encrypted and signed image------+               v
+  + assembling: |               *                                Verify fitImage
+  + fslb.elf    |               *                                       |
+  + pmufw.elf   |               *                                      yes
+  + system.bit  |               *                                       |
+  + bl31.elf    |               *                                       |
+  + u-boot.elf  |               *                                       v
+  +------------+                *    			    Finally boot up WRL kernel
+       ^
+       |
+(RSA2048/RSA4096 public key in u-boot,
+which is used to verify the signed
+fitImage with RSA2048/RSA4096 private key)
+
+
+4. CSU Introduction
+===================
+Hardware CSU processor embedded in ZynqMP SoC to handle security stuffs
+
+ZynqMP holds a triple redundant microblaze processor CSU to handle some security
+boottime stuffs like:
+
+  * Interpret the boot header and eFuse registers to configure the system and
+    do the validation of the public key and public key revocation.
+  * Loading, authentication, decryption(optional) of the FSBL, u-boot, etc.
+  * Configure the PL via PCAP & Keys management.
+  * Tamper events detecting and response.
+
+CSU module AES-GCM hardware engine supports confidentiality of the boot images
+and SHA hardware accelerator implements the SHA-3 algorithm and produces a 384
+bits digest, which is used together with the RSA accelerator to provide images
+authentication.
+
+Please refer to the chpater 12 in [3] for more secure boot information.
+
+
+5. Using Xilinx Design tools to make BOOT.BIN with AES encryption and RSA signature
+===================================================================================
+
+Prerequisites:
+
+  * RSA key pair related knowledges, like using openssl to make RSA key pair.
+  * Please carefully read chapter 8, 11, 12 in [3], chapter 8 and 16 in [4],
+    chapter 5 in [9] and all content of [5] in References section.
+  * Download and install Xilinx SDK 2019.1 or later version via link [7].
+
+After having downloaded and installed Xilinx SDK, then you can start to make
+RSA key pair and assemble your own zynqmp BOOT.BIN by bootgen command.
+
+5.1. Using bootgen in Xilinx Design tools
+-----------------------------------------
+Set environment with below command:
+
+   $ source <path_to_XSDK>/settings64.sh
+
+After setting environment, customer is able to generate RSA 4096 key pairs
+and BOOT.bin according to the doc [4], [5] and [9].
+The following are some simple examples:
+
+ - Generate RSA 4096 key pairs
+
+   $ bootgen -generate_keys auth pem -arch zynqmp -image generate_pem.bif
+
+ - Generate sha3 degist value
+
+   $ bootgen -image generate_hash_ppk.bif -arch zynqmp -w -o test.bin -efuseppkbits sha3.txt
+
+ - Generate BOOT.BIN for key stored in BBRAM
+
+   $ bootgen -image generate_secure_boot_bbram.bif -arch zynqmp -w -o BOOT.BIN
+
+ - Generate BOOT.BIN for key stored in eFUSE
+
+   $ bootgen -image generate_secure_boot_efuse.bif -arch zynqmp -w -o BOOT.BIN
+
+ - Generate BOOT.BIN for key stored in boot header
+
+   $ bootgen -image generate_secure_boot_bh.bif -arch zynqmp -w -o BOOT.BIN
+
+Note:
+All the *.bif files and keys are in BSP layer xilinx-zynqmp/zynqmp-secure-boot/zynqmp_keys.
+
+Warning:
+  * BH RSA Option(In chapter 12 of [3]), is only used for integration and test
+    support. The corresponding bit set keyword is bh_auth_enable in *.bif used
+    by bootgen. The consequently result is that the PPK and SPK-ID
+    will not be verified for authentication, so clearly this mode should not be
+    used in final product.
+    If this option is set in the configuration file and meanwhile the eFUSE is
+    programmed to force authentication with "RSA_EN" by Xilinx Tools, this device
+    will go into lockdown during boot.
+
+
+5.2 Detail steps about how to generate secure bootloader(BOOT.BIN)
+------------------------------------------------------------------
+Below example describes how to generate BOOT.BIN and the black key is stored
+in boot header.
+
+5.2.1 Generate First Stage Boot Loader
+To create First Stage Boot Loader, please refer to section
+[Create First Stage Boot Loader for ARM Cortex A53-Based APU] in [9]
+
+5.2.2 Generate PMU firmware
+To create PMU firmware, please refer to section
+[Create PMU Firmware for Platform Management Unit] in [9]
+
+5.2.3 Get FPGA bit stream file
+Download 2019.1-zcu102-release.tar.xz from below link:
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/135364615/Zynq+2019.1+Release
+And then get the system.bit file from the release package.
+
+5.2.4 Build the arm trust firmware
+Detail steps as below:
+	$ git clone https://github.com/Xilinx/arm-trusted-firmware.git
+	$ cd arm-trusted-firmware
+	$ git branch xilinx-v2019.1 xilinx-v2019.1
+	$ git checkout xilinx-v2019.1
+	$ export CROSS_COMPILE=<path_to_toolchain>/aarch64-linux-gnu-
+	$ export ARCH=aarch64
+	$ make realclean
+	$ make PLAT=zynqmp clean
+	$ make PLAT=zynqmp RESET_TO_BL31=1
+
+	At last, get the bl31.elf file
+
+5.2.5 Generate black key related files for boot header mode
+To create black key related files, please refer to section
+[PUF Registration - Boot Header Mode] in [9]
+
+5.2.6 Generate u-boot.elf
+When build BSP xilinx-zynqmp with zynqmp-secure-boot layer, u-boot will be built and
+the u-boot.elf is in <path_bsp_project>/build/tmp-glibc/work/xilinx_zynqmp-wrs-linux/u-boot-xlnx/v2019.01-xilinx-v2019.2+gitAUTOINC+dc61275b1d-r0/build
+How to build BSP xilinx-zynqmp with zynqmp-secure-boot layer, please refer to section 8.
+
+5.2.7 Generate BOOT.BIN
+So far, there are all the related files as below to generate BOOT.bin.
+	aes.nky		//AES key to encrypt each partition in BOOT.BIN
+	psk0.pem	//The primary secret key, it is from BSP layer xilinx-zynqmp/zynqmp-secure-boot/zynqmp_keys/hd-root-trusted-rsa4096
+	ssk0.pem	//The secondary secret key, it is from BSP layer xilinx-zynqmp/zynqmp-secure-boot/zynqmp_keys/hd-root-trusted-rsa4096
+	helperdata.txt	//PUF(physically unclonable function) Syndrome data
+	black_key.txt	//The black key that is a encrypted key
+	black_iv.txt	//The black key initialization vector
+	fsbl_a53.elf	//The First Stage Boot Loader
+	pmufw.elf	//The PMU firmware
+	system.bit	//The FPGA bit stream
+	bl31.elf	//The arm trust firmware
+	u-boot.elf	//The u-boot with the public key of RSA-2048/RSA-4096 key.
+
+Put the above files into the same directory, and run below command to create BOOT.BIN.
+Note: Please ensure the necessary environment is set in current terminal windows.
+
+	$ bootgen -image generate_secure_boot_bh.bif -arch zynqmp -w -o BOOT.BIN
+
+
+6. Programming BBRAM and eFUSE
+==============================
+After all the development effort, it is recommend to use BBRAM or eFUSE to
+save key for protecting product. About how to burn BBRAM and eFUSE, please
+refer to [5].
+
+
+7. A verifiable fitimage
+========================
+
+u-boot uses rsa2048/rsa4096 cryptographic algorithms to 'sign' software images.
+Images are signed with a private key of the ras2048/rsa4096 key pair that is only
+owned by the signer, but can be verified by anyone who has the public key.
+In wrlinux, the fitImage is signed with private key during building linux-yocto kernel.
+The public key is combined with u-boot.dtb that is in the final image u-boot.elf.
+The signature and verification process as follows:
+
+
+      Signing                                      Verification
+      =======                                      ============
+
+ +--------------+                   *
+ | 2048/4096 RSA|                   *             +---------------+
+ | key pair     |                   *             | Public key in |
+ +--------------+       +------> Public key ----->| trusted u-boot|
+        |               |           *             +---------------+
+        |               |           *                    |
+        v               |           *                    v
+   +---------+          |           *             +---------------+
+   |         |----------+           *             |u-boot verify  |
+   | Signer  |                      *             |the fitImage   |
+   |         |----------+           *             |signed with the|--> yes/no
+   +---------+          |           *             |rsa2048/rsa4096|
+        ^               |           *             |private key    |
+        |               |           *             +---------------+
+        |               |           *                    ^
+   +----------+         |           *                    |
+   | Software |         +----> Signed fitImage ----------+
+   |  image   |                     *
+   +----------+                     *
+
+Note:
+ - To sign kernel image, Xilinx secure boot feature supports rsa2048 and rsa4096 key type.
+   Set KERNEL_RAS_TYPE as the expected value. The default one is rsa2048.
+
+
+8. Enable secure boot for BSP xilinx-zynqmp
+===========================================
+
+8.1 Build xilinx-zynqmp BSP project with secure boot layer
+----------------------------------------------------------
+Detail steps as below:
+	$ mkdir <path_to_project>
+	$ cd <path_to_project>
+	$ <path_to_wrlinux>/wrlinux-x/setup.sh --machine xilinx-zynqmp --kernel standard --distro wrlinux --dl-layers --all-layers --accept-eula=yes
+	$ source ./environment-setup-x86_64-wrlinuxsdk-linux
+	$ source ./oe-init-build-env
+	$ bitbake-layers add-layer <path_to_project>/layers/xilinx-zynqmp/zynqmp-secure-boot
+	$ bitbake wrlinux-image-glibc-std
+
+Note:
+When build xilinx-zynqmp BSP project with secure boot layer, the kernel image type is fitImage that
+includes dtb and kernel image. They are all signed by the private key of a RSA-2048/RSA-4096 key that is in
+<path_to_project>/layers/xilinx-zynqmp/zynqmp-secure-boot/fitImage-rsa2048-keys and
+<path_to_project>/layers/xilinx-zynqmp/zynqmp-secure-boot/fitImage-rsa4096-keys
+
+The secure boot layer is an internal layer only for BSP xilinx-zynqmp, it doesn't support to add
+this layer with --layer option during setup project.
+
+8.2 Boot fitImage
+-----------------
+The fitImage is booted with command "bootm".
+There is an example as below, download kernel from tftp server and mount NFS file system.
+
+	# setenv bootargs console=ttyPS0,115200n8 root=/dev/nfs rw rootwait earlycon=cdns,0xFF000000 nfsroot=$serverip:<path_to_nfs>,v3,tcp ip=dhcp clk_ignore_unused
+	# setenv bootcmd 'tftpboot 0x10000000 $serverip:<path_to_kernel>/fitImage; bootm 0x10000000'
+	# setenv ipaddr <board-ip>
+	# setenv netmask <board-netmask>
+	# setenv gatewayip <board-gatewayip>
+	# setenv serverip <server-ip>
+	# run bootcmd
+
+
+9. Notes
+========
+
+Only encryption and authentication part of CSU are validated, other functions
+like tamper event detection and response belongs to CSU bootrom codes, please
+contact Xilinx for more information about CSU. Only boot header mode(A black
+key stored in boot header) is validated currently.
+
+Risks warning from UG1085, once program efuse wrongly, the board might enter
+into a secure lockdown state if SEC_LK is programmed into eFuse. Please refer
+to Chapter 8, 11, and 12 in [3] for more security related information.
+
+Not all secure function modules are validated due to hardware resource issue,
+like the following:
+  SEC_LK, JTAG_DIS, ERR_DIS, BBRAM_DIS, ENC_ONLY, etc.
+
+
+10. References
+==============
+
+[1] http://www.wiki.xilinx.com/Zynq+UltraScale+MPSoC+Secure+Boot
+[2] https://www.xilinx.com/html_docs/registers/ug1087/ug1087-zynq-ultrascale-registers.html
+[3] https://www.xilinx.com/support/documentation/user_guides/ug1085-zynq-ultrascale-trm.pdf
+[4] https://www.xilinx.com/support/documentation/user_guides/ug1137-zynq-ultrascale-mpsoc-swdev.pdf
+[5] https://www.xilinx.com/support/documentation/application_notes/xapp1319-zynq-usp-prog-nvm.pdf
+[6] https://www.xilinx.com/support/documentation-navigation/design-hubs/dh0070-zynq-mpsoc-design-overview-hub.html
+[7] https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/embedded-design-tools.html
+[8] https://github.com/Xilinx/u-boot-xlnx  //The fitImage-related docs in path_to_u-boot-xlnx/doc
+[9] https://www.xilinx.com/support/documentation/sw_manuals/xilinx2017_2/ug1209-embedded-design-tutorial.pdf
