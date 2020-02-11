@@ -6,7 +6,8 @@ require conf/machine/include/tune-cortexa53.inc
 
 MACHINE_FEATURES += "ext3 pci usbgadget usbhost vfat keyboard network"
 
-KERNEL_IMAGETYPE = "Image"
+KERNEL_IMAGETYPE = ""
+KERNEL_IMAGETYPES = " ${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', 'fitImage', 'Image.gz Image', d)}"
 KERNEL_DEVICETREE_xilinx-zynqmp = "xilinx/zynqmp-zcu102-rev1.0.dtb xilinx/zynqmp-zcu102-rev1.0-canfd.dtb"
 
 SERIAL_CONSOLE = "115200 ttyPS0"
@@ -18,8 +19,9 @@ IMAGE_FSTYPES += "tar.bz2 wic wic.bmap"
 
 # wic support
 WKS_FILE ?= "zynqmp-sdimage.wks"
+IMAGE_INSTALL_append = " ${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', 'kernel-devicetree kernel-image-fitimage', 'kernel-devicetree kernel-image-image', d)}"
 do_image_wic[depends] += "mtools-native:do_populate_sysroot dosfstools-native:do_populate_sysroot"
-IMAGE_BOOT_FILES ?= " Image zynqmp-zcu102-rev1.0.dtb "
+IMAGE_BOOT_FILES ?= " ${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', 'fitImage', 'Image zynqmp-zcu102-rev1.0.dtb', d)}"
 
 # multilib support
 MULTILIBS ?= "multilib:lib32"
