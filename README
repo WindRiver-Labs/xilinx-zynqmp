@@ -60,7 +60,7 @@ The following table summarizes the valid Wind River Linux distros for this BSP.
   +--------------+-------------+-------------+------------------+
   | valid/distro |   wrlinux   | wrlinux-cgl | wrlinux-std-sato |
   +--------------+-------------+-------------+------------------+
-  |    valid     |      Y      |      N      |         y        |
+  |    valid     |      Y      |      N      |         Y        |
   +--------------+-------------+-------------+------------------+
 
 For the supported kernel type for this BSP, check the TARGET_SUPPORTED_KTYPES
