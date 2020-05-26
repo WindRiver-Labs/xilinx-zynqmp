@@ -1,0 +1,43 @@
+From c92be1283ef3a889aacdc907708cea8be69a5e87 Mon Sep 17 00:00:00 2001
+From: Quanyang Wang <quanyang.wang@windriver.com>
+Date: Tue, 26 May 2020 11:01:47 +0800
+Subject: [PATCH 1/3] gpu: mail-400: delete obselete API ioremap_nocache
+
+Because of mainline commit 4bdc0d676a64 ("remove ioremap_nocache and
+devm_ioremap_nocache"), use ioremap instead of ioremap_nocache.
+
+Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
+---
+ linux/mali_memory_cow.c        | 2 +-
+ linux/mali_osk_low_level_mem.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/linux/mali_memory_cow.c b/linux/mali_memory_cow.c
+index 71b83d6..219b190 100644
+--- a/linux/mali_memory_cow.c
++++ b/linux/mali_memory_cow.c
+@@ -683,7 +683,7 @@ void _mali_mem_cow_copy_page(mali_page_node *src_node, mali_page_node *dst_node)
+ 		/*
+ 		* use ioremap to map src for BLOCK memory
+ 		*/
+-		src = ioremap_nocache(_mali_page_node_get_dma_addr(src_node), _MALI_OSK_MALI_PAGE_SIZE);
++		src = ioremap(_mali_page_node_get_dma_addr(src_node), _MALI_OSK_MALI_PAGE_SIZE);
+ 		memcpy(dst, src , _MALI_OSK_MALI_PAGE_SIZE);
+ 		iounmap(src);
+ 	}
+diff --git a/linux/mali_osk_low_level_mem.c b/linux/mali_osk_low_level_mem.c
+index 923bbbd..26da23b 100644
+--- a/linux/mali_osk_low_level_mem.c
++++ b/linux/mali_osk_low_level_mem.c
+@@ -33,7 +33,7 @@ void _mali_osk_write_mem_barrier(void)
+ 
+ mali_io_address _mali_osk_mem_mapioregion(uintptr_t phys, u32 size, const char *description)
+ {
+-	return (mali_io_address)ioremap_nocache(phys, size);
++	return (mali_io_address)ioremap(phys, size);
+ }
+ 
+ void _mali_osk_mem_unmapioregion(uintptr_t phys, u32 size, mali_io_address virt)
+-- 
+2.17.1
+

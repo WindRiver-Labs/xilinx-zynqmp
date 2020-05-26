@@ -28,6 +28,9 @@ SRC_URI = " \
 	file://0017-gpu-mail-400-instead-of-dma-mapping.h-with-dma-direc.patch \
 	file://0018-gpu-mail-400-use-new-timer-API-ktime_get_boottime.patch \
 	file://0019-gpu-mail-400-change-return-value-of-mali_mem_vma_fau.patch \
+	file://0020-gpu-mail-400-delete-obselete-API-ioremap.patch \
+	file://0021-gpu-mail-400-use-64-bit-timer-API.patch \
+	file://0022-gpu-mail-400-use-PTR_ERR_OR_ZERO-instead.patch \
 	"
 SRC_URI[md5sum] = "8f04ae86957fd56197ad5a9d017b84ff"
 SRC_URI[sha256sum] = "bfd14fa3f75a71d4ba313534e651ca1c58dc354e882c0b39867e335882a06350"

@@ -1,0 +1,34 @@
+From c6a22376f6ef96543c06d6d2a85240e4b616099b Mon Sep 17 00:00:00 2001
+From: Quanyang Wang <quanyang.wang@windriver.com>
+Date: Tue, 26 May 2020 11:22:27 +0800
+Subject: [PATCH 2/3] gpu: mail-400: use 64-bit timer API
+
+Because of mainline commit 412c53a680a9 ("y2038: remove
+unused time32 interfaces"), use 64-bit timer APIs intead of
+32-bit.
+
+Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
+---
+ linux/mali_osk_time.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/linux/mali_osk_time.c b/linux/mali_osk_time.c
+index a4e389f..55a6ab6 100644
+--- a/linux/mali_osk_time.c
++++ b/linux/mali_osk_time.c
+@@ -46,9 +46,9 @@ void _mali_osk_time_ubusydelay(u32 usecs)
+ 
+ u64 _mali_osk_time_get_ns(void)
+ {
+-	struct timespec tsval;
+-	getnstimeofday(&tsval);
+-	return (u64)timespec_to_ns(&tsval);
++	struct timespec64 tsval;
++	ktime_get_real_ts64(&tsval);
++	return (u64)timespec64_to_ns(&tsval);
+ }
+ 
+ u64 _mali_osk_boot_time_get_ns(void)
+-- 
+2.17.1
+
