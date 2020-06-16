@@ -185,3 +185,23 @@ Most of these features are not validated since they need a special TRD firmware
 bootloader with the related PL bitstream, generally speaking, you can download
 the specific Xilinx xapp from the vendor website with your Xilinx account,
 like xapp1305 for SFP interface.
+
+4.8 Generate dtb based on HDF/XSA
+---------------------------------
+Firstly, set BB_NO_NETWORK as '0' in <path-of-project>/build/conf/local.conf file.
+Then following the steps as below to generate the dtb files based on the HDF/XSA files:
+
+     $ cd path-of-project
+     $ . ./oe-init-build-env
+     $ cat << _EOF >> conf/local.conf
+HDF_BASE = "file://"
+HDF_PATH = "/< path-to-hdf >/system.xsa"
+HDF_MACHINE = "zcu102-zynqmp"
+_EOF
+     $ bitbake device-tree
+
+Once bitbake successfully, you will find the dtb file "system.dtb" in the directory:
+<path-of-project>/build/tmp-glibc/deploy/images/xilinx-zynqmp/system.dtb
+
+NOTE: The version of the xsct tools is v2020.1, so there may be some unpredicatable
+problems if using the HDF/XSA files of older versions.
