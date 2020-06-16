@@ -37,3 +37,6 @@ OSTREE_KERNEL ?= "Image"
 OSTREE_UBOOT_CMD ?= "booti"
 OSTREE_WKS_EFI_SIZE ?= "--size=64M"
 INSTAB ?= "1"
+
+XILINX_VER_MAIN = "2020.1"
+HDF_MACHINE_xilinx-zynqmp ?= "zcu102-zynqmp"
