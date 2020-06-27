@@ -4,7 +4,7 @@ LICENSE = "Proprietary"
 LICENSE_FLAGS = "xilinx"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Proprietary;md5=0557f9d92cf58f2ccdd50f62f8ac0b28"
 
-inherit distro_features_check
+inherit features_check
 
 ANY_OF_DISTRO_FEATURES = "fbdev x11"
 
