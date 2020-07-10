@@ -22,6 +22,7 @@ This BSP supports the following boards:
 =================
 
   - 2019/06 (LINUXPG-77): WindRiver CI/CD branch support: Add BSP support for ZYNQMP ZCU102 based on xilinx-sdk-2019.01
+  - 2020/07 (LINUXPG-466): Add BSP support for ZYNQMP ZCU102 board based on xilinx-sdk-2020.01
 
 
 3. BSP Features
@@ -95,7 +96,7 @@ in a different environment it may possibly have some issues.
 	Processor:              ZYMQMP (410fd034 revision 4, Chip ID: xczu9eg)
 	Board Revision:	        Rev 1.0/1.1
 	BootLoader:             U-Boot
-	BootLoader Version:     U-Boot 2019.01
+	BootLoader Version:     U-Boot 2020.01
 
 4.2 USB OTG
 -----------
@@ -192,6 +193,7 @@ Firstly, set BB_NO_NETWORK as '0' in <path-of-project>/build/conf/local.conf fil
 Then following the steps as below to generate the dtb files based on the HDF/XSA files:
 
      $ cd path-of-project
+     $ . ./environment-setup-x86_64-wrlinuxsdk-linux
      $ . ./oe-init-build-env
      $ cat << _EOF >> conf/local.conf
 HDF_BASE = "file://"
@@ -203,5 +205,5 @@ _EOF
 Once bitbake successfully, you will find the dtb file "system.dtb" in the directory:
 <path-of-project>/build/tmp-glibc/deploy/images/xilinx-zynqmp/system.dtb
 
-NOTE: The version of the xsct tools is v2020.1, so there may be some unpredicatable
+NOTE: The version of the xsct tools is v2020.1, so there may be some unpredictable
 problems if using the HDF/XSA files of older versions.
