@@ -35,3 +35,5 @@ OSTREE_KERNEL ?= "Image"
 OSTREE_UBOOT_CMD ?= "booti"
 OSTREE_WKS_EFI_SIZE ?= "--size=64M"
 INSTAB ?= "1"
+
+MACHINEOVERRIDES_prepend_xilinx-zynqmp = "mali400:zynqmp:zynqmpeg:"
