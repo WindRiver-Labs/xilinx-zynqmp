@@ -96,7 +96,7 @@ in a different environment it may possibly have some issues.
 	Processor:              ZYMQMP (410fd034 revision 4, Chip ID: xczu9eg)
 	Board Revision:	        Rev 1.0/1.1
 	BootLoader:             U-Boot
-	BootLoader Version:     U-Boot 2020.01
+	BootLoader Version:     U-Boot 2019.02
 
 4.2 USB OTG
 -----------
