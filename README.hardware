@@ -147,6 +147,7 @@ As below is the step how to build a graphics enabled system:
   2) Launch bitbake to build an image with graphics support
 
      $ cd path_to_your_project
+     $ . ./environment-setup-x86_64-wrlinuxsdk-linux
      $ . ./oe-init-build-env
      $ cat << _EOF >> conf/local.conf
 DISTRO ?= "wrlinux-graphics"

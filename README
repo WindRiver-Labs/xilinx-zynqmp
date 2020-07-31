@@ -105,7 +105,7 @@ Refer to the bootloader/README for information on how to make an SD
 bootable card. Deploy the kernel image, DTB image and file system image as follows:
 
 	# mount /dev/mmcblk0p2 /mnt/sd
-	# tar xfj wrlinux-image-glibc-std-xilinx-zynqmp.tar.bz2 --numeric-owner -C /mnt/sd
+	# tar xfj wrlinux-image-std-xilinx-zynqmp.tar.bz2 --numeric-owner -C /mnt/sd
 	# umount /mnt/sd
 	# mount /dev/mmcblk0p1 /mnt/sd
 	# cp path_to_Image /mnt/sd/boot
@@ -232,7 +232,7 @@ images, the second is the related root file system.
 
 1) Deploy the created WIC image into SD card(/dev/sdx) in your host machine.
 
-   $ sudo dd if=wrlinux-image-glibc-<rootfs_type>-xilinx-zynqmp.wic of=/dev/sdx
+   $ sudo dd if=wrlinux-image-<rootfs_type>-xilinx-zynqmp.wic of=/dev/sdx
 
 2) Download binary bootloader from the vendor website, and deploy BOOT.BIN into
    /dev/sdx1
