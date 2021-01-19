@@ -219,27 +219,24 @@ information about WIC:
 
 https://www.yoctoproject.org/docs/2.6/mega-manual/mega-manual.html#creating-partitioned-images-using-wic
 
+7.1 Build the WIC image within BOOT.BIN in boot partition
+-------------------------------------------------------
+BOOT.BIN is the bootloader for zcu102 board. Because of license issue, it isn't
+integrated into WRLinux. You can download it from the website:
+
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18842316/Linux+Prebuilt+Images
+
+and then add one line below to local.conf:
+
+IMAGE_BOOT_FILES_append = "/< path-to-BOOT.BIN >/BOOT.BIN;BOOT.BIN"
+
 After having built your project, a partitioned WIC image will be created in the
 deploy folder as follows:
 
   path_to_your_project/build/tmp-glibc/deploy/images/xilinx-zynqmp/wrlinux-image-<rootfs_type>-xilinx-zynqmp.wic
 
 There are two partitions in this WIC images, the first one is to hold the boot
-images, the second is the related root file system.
-
-7.1 An example to deploy bootloader into the first partition
-------------------------------------------------------------
-
-1) Deploy the created WIC image into SD card(/dev/sdx) in your host machine.
-
-   $ sudo dd if=wrlinux-image-<rootfs_type>-xilinx-zynqmp.wic of=/dev/sdx
-
-2) Download binary bootloader from the vendor website, and deploy BOOT.BIN into
-   /dev/sdx1
-
-   $ sudo mount /dev/sdx1 path_to_sdx1
-   $ cp -r path_to_your_bootloader/BOOT.BIN path_to_sdx1
-   $ sync; sudo umount path_to_sdx1
+images(including kernel/dtb/BOOT.BIN), the second is the related root file system.
 
 7.2 Boot the board from the WIC SD card
 ---------------------------------------
