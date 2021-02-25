@@ -36,8 +36,6 @@ the corresponding h/w features exist.
 
   o General Platform
 	+ DMA Engine: The enhanced direct memory access (EDMA) controller
-	+ IOMMU
-	+ SMMUv2
 
   o Bus
 	+ CAN: ZynqMP
@@ -76,11 +74,12 @@ the corresponding h/w features exist.
 3.2 Patch integrated and Unsupported Features
 ---------------------------------------------
 
-The following features are not validated fanned out from PL:
+The following features are not validated:
 
   x HPC0, HPC1 ports (One for imx274 camera)
   x Two HDMI ports
   x 2x2 SFP/SFP+ ports
+  x SMMU
 
 Please refer to BSP notes for more information.
 
