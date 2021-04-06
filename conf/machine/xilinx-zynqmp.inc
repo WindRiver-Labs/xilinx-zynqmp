@@ -20,7 +20,7 @@ IMAGE_FSTYPES += "tar.bz2 wic wic.bmap"
 # wic support
 WKS_FILE ?= "zynqmp-sdimage.wks"
 do_image_wic[depends] += "mtools-native:do_populate_sysroot dosfstools-native:do_populate_sysroot"
-IMAGE_BOOT_FILES ?= " Image zynqmp-zcu102-rev1.0.dtb ${@bb.utils.contains('DISTRO_FEATURES', 'ostree', 'boot.scr', '', d)}"
+IMAGE_BOOT_FILES ?= " Image zynqmp-zcu102-rev1.0.dtb"
 
 # multilib support
 MULTILIBS ?= "multilib:lib32"
@@ -40,5 +40,6 @@ DEFAULT_DTB ?= "zynqmp-zcu102-rev1.0.dtb"
 OSTREE_NETINST_DEV ?= "/dev/mmcblk0,/dev/sda,/dev/vda"
 OSTREE_NETINST_ARGS ?= "${OSTREE_CONSOLE} bl=ufsd rdinit=/install instdev=${OSTREE_NETINST_DEV} instname=wrlinux instbr=\$BRANCH insturl=\$URL instab=${OSTREE_USE_AB} instsf=1 instdate=BUILD_DATE"
 OSTREE_COPY_IMAGE_BOOT_FILES = "1"
-IMAGE_BOOT_FILES_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'ostree', '${INITRAMFS_IMAGE}-${MACHINE}.${INITRAMFS_FSTYPES};initramfs', '', d)}"
+INITRAMFS_IMAGE ??= ""
+IMAGE_BOOT_FILES_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'ostree', 'boot.scr', '', d)} ${@bb.utils.contains('DISTRO_FEATURES', 'ostree', '${INITRAMFS_IMAGE}-${MACHINE}.${INITRAMFS_FSTYPES};initramfs', '', d)}"
 MACHINEOVERRIDES_prepend_xilinx-zynqmp = "mali400:zynqmp:zynqmpeg:"
