@@ -228,7 +228,7 @@ https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18842316/Linux+Prebuilt+Im
 
 and then add one line below to local.conf:
 
-IMAGE_BOOT_FILES_append = "/< path-to-BOOT.BIN >/BOOT.BIN;BOOT.BIN"
+IMAGE_BOOT_FILES_append = " /< path-to-BOOT.BIN >/BOOT.BIN;BOOT.BIN"
 
 After having built your project, a partitioned WIC image will be created in the
 deploy folder as follows:
