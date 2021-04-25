@@ -198,14 +198,14 @@ You need to add feature/kexec support as follow:
 6.1 kexec
 ---------
 
-	kexec -l  /root/Image.gz --append="`cat /proc/cmdline`"
+	kexec -l  /boot/Image --append="`cat /proc/cmdline`"
 	kexec -e
 
 6.2 kdump
 ---------
 
 Add crashkernel=512M to the kernel cmdline
-   kexec -p /root/Image.gz --append="$your-bootcmd"
+   kexec -p /boot/Image --append="$your-bootcmd"
    echo c > /proc/sysrq-trigger
 
 
