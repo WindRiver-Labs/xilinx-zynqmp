@@ -29,6 +29,9 @@ do_configure_prepend_xilinx-zynqmp() {
     sed -i 's/zynqmp-zcu102-revB.dts/zynqmp-zcu102-revB.dtsi/g' ${S}/device_tree/data/kernel_dtsi/${YAML_KERNEL_VERSION}/BOARD/zcu102-rev1.0.dtsi
     sed -i 's/zynqmp-zcu102-revA.dts/zynqmp-zcu102-revA.dtsi/g' ${S}/device_tree/data/kernel_dtsi/${YAML_KERNEL_VERSION}/zynqmp/zynqmp-zcu102-revB.dtsi
     sed -i '/dts-v1/d' ${S}/device_tree/data/kernel_dtsi/${YAML_KERNEL_VERSION}/zynqmp/zynqmp-zcu102-revA.dtsi
+    sed -i '/interrupt-controller@f9010000/,+11d' ${S}/device_tree/data/kernel_dtsi/${YAML_KERNEL_VERSION}/zynqmp/zynqmp.dtsi
+    sed -i '/amba: axi/i \   amba_apu: amba-apu@0 {' ${S}/device_tree/data/kernel_dtsi/${YAML_KERNEL_VERSION}/zynqmp/zynqmp.dtsi
+    sed -i '/amba: axi/i \   compatible = "simple-bus";#address-cells = <2>;#size-cells = <1>;ranges = <0 0 0 0 0xffffffff>;gic: interrupt-controller@f9010000 {compatible = "arm,gic-400";#interrupt-cells = <3>;reg = <0x0 0xf9010000 0x10000>,<0x0 0xf9020000 0x20000>,<0x0 0xf9040000 0x20000>,<0x0 0xf9060000 0x20000>;interrupt-controller;interrupt-parent = <&gic>;interrupts = <1 9 0xf04>;};};\n' ${S}/device_tree/data/kernel_dtsi/${YAML_KERNEL_VERSION}/zynqmp/zynqmp.dtsi
 
     mkdir -p ${B}/device-tree/include/dt-bindings/power
     mkdir -p ${B}/device-tree/include/dt-bindings/reset
