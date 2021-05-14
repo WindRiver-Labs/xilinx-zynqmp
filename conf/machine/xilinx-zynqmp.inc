@@ -43,3 +43,7 @@ OSTREE_COPY_IMAGE_BOOT_FILES = "1"
 INITRAMFS_IMAGE ??= ""
 IMAGE_BOOT_FILES_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'ostree', 'boot.scr', '', d)} ${@bb.utils.contains('DISTRO_FEATURES', 'ostree', '${INITRAMFS_IMAGE}-${MACHINE}.${INITRAMFS_FSTYPES};initramfs', '', d)}"
 MACHINEOVERRIDES_prepend_xilinx-zynqmp = "mali400:zynqmp:zynqmpeg:"
+
+OSTREE_BOOTSCR_PRECMD ?= "\
+setenv no_menu yes; \
+"
