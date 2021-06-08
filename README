@@ -429,8 +429,6 @@ As below is the file contents example:
 / {
     fragment@0 {
         target-path = "/fpga-full";
-        #address-cells = <1>;
-        #size-cells = <1>;
 
         __overlay__ {
             #address-cells = <2>;
