@@ -43,7 +43,7 @@ index 000000000000..7865d2ebbe71
 +#include "zynqmp-zcu102-rev1.0.dts"
 +
 +/ {
-+	amba_pl: amba_pl@0 {
++	amba_pl: amba_pl {
 +		#address-cells = <2>;
 +		#size-cells = <2>;
 +		compatible = "simple-bus";
