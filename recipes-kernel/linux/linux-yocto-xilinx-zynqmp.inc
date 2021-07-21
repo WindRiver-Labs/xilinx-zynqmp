@@ -11,7 +11,6 @@ FILESEXTRAPATHS_prepend_xilinx-zynqmp := "${THISDIR}/files:"
 
 SRC_URI_append_xilinx-zynqmp = " \
     file://0001-arch-arm64-dts-add-dts-file-for-CANFD-feature-on-xil.patch \
-    file://cfg/remove-dma.cfg \
 "
 
 KERNEL_VERSION_SANITY_SKIP = "1"
