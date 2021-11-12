@@ -198,7 +198,7 @@ To create black key related files, please refer to section
 
 5.2.6 Generate u-boot.elf
 When build BSP xilinx-zynqmp with zynqmp-secure-boot layer, u-boot will be built and
-the u-boot.elf is in <path_bsp_project>/build/tmp-glibc/work/xilinx_zynqmp-wrs-linux/u-boot-xlnx/v2019.01-xilinx-v2019.2+gitAUTOINC+dc61275b1d-r0/build
+the u-boot.elf is in <path_bsp_project>/build/tmp-glibc/deploy/images/xilinx-zynqmp/
 How to build BSP xilinx-zynqmp with zynqmp-secure-boot layer, please refer to section 8.
 
 5.2.7 Generate BOOT.BIN
