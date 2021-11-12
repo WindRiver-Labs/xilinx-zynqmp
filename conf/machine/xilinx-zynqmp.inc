@@ -6,6 +6,9 @@ require conf/machine/include/tune-cortexa53.inc
 
 MACHINE_FEATURES += "ext3 pci usbgadget usbhost vfat keyboard network"
 
+KERNEL_IMAGETYPES = " ${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', 'fitImage', 'Image.gz Image', d)}"
+IMAGE_INSTALL_append = " ${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', 'kernel-devicetree kernel-image-fitimage', 'kernel-devicetree kernel-image-image', d)}"
+IMAGE_BOOT_FILES ?= " ${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', 'fitImage', 'Image zynqmp-zcu102-rev1.0.dtb', d)}"
 KERNEL_IMAGETYPE = "Image"
 KERNEL_DEVICETREE_xilinx-zynqmp = "xilinx/zynqmp-zcu102-rev1.0.dtb xilinx/zynqmp-zcu102-rev1.0-canfd.dtb"
 KERNEL_EXTRA_ARGS_append_xilinx-zynqmp = " DTC_FLAGS='-@'"

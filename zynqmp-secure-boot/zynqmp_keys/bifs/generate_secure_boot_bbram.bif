@@ -1,0 +1,12 @@
+//arch = zynqmp; split = false; format = BIN
+the_ROM_image:
+{
+	[aeskeyfile] ./aes.nky
+	[keysrc_encryption] bbram_red_key
+	[fsbl_config] a53_x64
+	[bootloader, encryption = aes] ./fsbl_a53.elf
+	[pmufw_image] ./pmufw.elf 
+	[encryption = aes, destination_device = pl] ./system.bit
+	[encryption = aes, destination_cpu = a53-0, exception_level = el-3, trustzone] ./bl31.elf
+	[encryption = aes, destination_cpu = a53-0, exception_level = el-2] ./u-boot.elf
+}

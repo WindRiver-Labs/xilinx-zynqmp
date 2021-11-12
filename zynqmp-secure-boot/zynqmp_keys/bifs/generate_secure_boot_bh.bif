@@ -1,0 +1,17 @@
+//arch = zynqmp; split = false; format = BIN
+the_ROM_image:
+{
+	[keysrc_encryption] bh_blk_key
+	[pskfile] ./psk0.pem
+	[sskfile] ./ssk0.pem
+	[puf_file] helperdata.txt
+	[bh_keyfile] black_key.txt
+	[bh_key_iv] black_iv.txt
+	[auth_params] ppk_select=0
+	[fsbl_config] pufhd_bh, puf4kmode, shutter=0x0100005E, bh_auth_enable
+	[bootloader, destination_cpu=a53-0, authentication=rsa, encryption=aes, aeskeyfile=aes0.nky] ./fsbl_a53.elf
+	[pmufw_image] ./pmufw.elf
+	[authentication=rsa, encryption=aes, aeskeyfile=aes1.nky] ./system.bit
+	[authentication=rsa, encryption=aes, aeskeyfile=aes2.nky, destination_cpu=a53-0, exception_level=el-3, trustzone] ./bl31.elf
+	[authentication=rsa, encryption=aes, aeskeyfile=aes3.nky, destination_cpu=a53-0, exception_level=el-2] ./u-boot.elf
+}

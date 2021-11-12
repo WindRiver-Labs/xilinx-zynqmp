@@ -1,0 +1,6 @@
+generate_hash_ppk:
+{
+[pskfile] ./psk0.pem
+[sskfile] ./ssk0.pem
+[bootloader, destination_cpu=a53-0, authentication=rsa] ./zynqmp_fsbl/Debug/zynqmp_fsbl.elf
+}

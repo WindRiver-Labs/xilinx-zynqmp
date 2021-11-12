@@ -1,0 +1,5 @@
+Keys for zynqmp demo
+
+Note & Warning:
+  These keys and bif configs are only used to demonstrate secure application on
+  zynqmp platform, and they should never be directly used in your real product.
