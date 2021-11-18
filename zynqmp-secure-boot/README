@@ -275,7 +275,7 @@ Note:
 Detail steps as below:
 	$ mkdir <path_to_project>
 	$ cd <path_to_project>
-	$ <path_to_wrlinux>/wrlinux-x/setup.sh --machine xilinx-zynqmp --kernel standard --distro wrlinux --dl-layers --all-layers --accept-eula=yes
+	$ <path_to_wrlinux>/wrlinux-x/setup.sh --machine xilinx-zynqmp --distro wrlinux --dl-layers --all-layers --accept-eula=yes
 	$ source ./environment-setup-x86_64-wrlinuxsdk-linux
 	$ source ./oe-init-build-env
 	$ bitbake-layers add-layer <path_to_project>/layers/xilinx-zynqmp/zynqmp-secure-boot
