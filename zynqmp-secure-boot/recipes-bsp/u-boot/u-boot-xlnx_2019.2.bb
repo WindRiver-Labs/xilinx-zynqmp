@@ -7,7 +7,9 @@ SRCREV ?= "dc61275b1d505f6a236de1c5b0f35485914d2bcc"
 
 include u-boot-xlnx.inc
 
-SRC_URI_append = " file://0001-u-boot-xlnx-enable-u-boot-configure-CONFIG_OF_SEPARA.patch"
+SRC_URI_append = " file://0001-u-boot-xlnx-enable-u-boot-configure-CONFIG_OF_SEPARA.patch \
+				   file://0001-arm64-zynqmp-Remove-incorrect-phy-from-DT-for-zcu102.patch \
+				   "
 
 LICENSE = "GPLv2+"
 LIC_FILES_CHKSUM = "file://README;beginline=1;endline=4;md5=744e7e3bb0c94b4b9f6b3db3bf893897"

@@ -1,0 +1,37 @@
+From 32da535b89e4f625b14785403558070a98e1dbfd Mon Sep 17 00:00:00 2001
+From: Michal Simek <michal.simek@xilinx.com>
+Date: Thu, 9 Jan 2020 13:01:07 +0100
+Subject: [PATCH] arm64: zynqmp: Remove incorrect phy from DT for zcu102-revB
+ up
+
+Upstream repo https://gitlab.denx.de/u-boot/u-boot.git
+Upstream commit 32da535b89e4f625b14785403558070a98e1dbfd
+
+zcu102-revB/up are not removing phy from revA properly because of incorrect
+name.
+
+Upstream-Status: Backport
+
+Fixes: 2975a42b42c5 ("arm64: zynqmp: Use ethernet-phy as node name for ethernet phys")
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
+---
+ arch/arm/dts/zynqmp-zcu102-revB.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/dts/zynqmp-zcu102-revB.dts b/arch/arm/dts/zynqmp-zcu102-revB.dts
+index 2132024a25..38ec188164 100644
+--- a/arch/arm/dts/zynqmp-zcu102-revB.dts
++++ b/arch/arm/dts/zynqmp-zcu102-revB.dts
+@@ -25,7 +25,7 @@
+ 		/* reset-gpios = <&tca6416_u97 6 GPIO_ACTIVE_LOW>; */
+ 	};
+ 	/* Cleanup from RevA */
+-	/delete-node/ phy@21;
++	/delete-node/ ethernet-phy@21;
+ };
+ 
+ /* Fix collision with u61 */
+-- 
+2.25.1
+
