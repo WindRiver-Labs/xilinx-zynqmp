@@ -316,12 +316,51 @@ https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18842496/Linux+CAN+driver
 If customer wants to implement their own or more canfd devices, please connect with
 Xilinx to get professional technical support about how to design CANFD on FPGA side.
 
-8.6 USB OTG
------------
+8.6 USB
+-------
 
-USB OTG mode can only work at USB2.0 speed for host & device, and file this question to
+The USB interface on the PS-side serves multiple roles as a host, device, and OTG
+controller. Please change kernel options and dts file according to the descriptions
+in the following link:
+
+  https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841729/Zynq+Ultrascale+MPSOC+Linux+USB+device+driver
+
+And also, the USB Jumper Settings on the board ZCU102 are described below.
+
+8.6.1 USB Host
+--------------
+
+    J109    J110    J112    J113    J7
+    2-3     2-3     1-2     1-2     ON
+
+8.6.2 USB Device
+----------------
+
+    J109    J110    J112    J113    J7
+    2-3     1-2     1-2     1-2     OFF
+
+In addition to the method which modifies "dr_mode" property in dts file, you can change this property
+by using "fdt" u-boot command. The example for USB device mode is as described below:
+
+	=> tftpboot 0x10000000 Image; tftpboot 0x11800000 dtb
+	=> fdt addr 0x11800000; fdt resize; fdt set /axi/usb0@ff9d0000/dwc3@fe200000 dr_mode peripheral
+	=> booti 0x10000000 - 0x11800000
+
+8.6.3 USB OTG
+-------------
+
+    J109    J110    J112    J113    J7
+    1-2     1-2     1-2     2-3     ON
+
+The example to change "dr_mode" to "otg" is as described below:
+
+	=> tftpboot 0x10000000 Image; tftpboot 0x11800000 dtb
+	=> fdt addr 0x11800000; fdt resize; fdt set /axi/usb0@ff9d0000/dwc3@fe200000 dr_mode otg
+	=> booti 0x10000000 - 0x11800000
+
+NOTE: USB OTG mode can only work at USB2.0 speed for host & device, and file this question to
 the vendor, the following link is their answer:
-  https://forums.xilinx.com/t5/Embedded-Development-Tools/OTG-in-ZCU102-with-Rev-1-0-doesn-t-work-on-the-latest-SDK-v2017/td-p/837647
+  https://support.xilinx.com/s/question/0D52E00006hpgaGSAQ/otg-in-zcu102-with-rev-1-0-doesnt-work-on-the-latest-sdk-v20174
 
 8.7 PCIe
 --------
