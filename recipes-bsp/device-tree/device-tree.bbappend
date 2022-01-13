@@ -39,4 +39,8 @@ do_configure_prepend_xilinx-zynqmp() {
     cp ${STAGING_KERNEL_DIR}/include/dt-bindings/reset/xlnx-zynqmp-resets.h ${B}/device-tree/include/dt-bindings/reset
 }
 
+do_configure_append_xilinx-zynqmp() {
+    sed -i 's/lane1 6 0 3 27000000/psgtr 1 PHY_TYPE_DP 0 3/' ${B}/device-tree/pcw.dtsi
+}
+
 COMPATIBLE_MACHINE_xilinx-zynqmp = "xilinx-zynqmp"
