@@ -23,6 +23,9 @@ This BSP supports the following boards:
 
   - 2019/06 (LINUXPG-77): WindRiver CI/CD branch support: Add BSP support for ZYNQMP ZCU102 based on xilinx-sdk-2019.01
   - 2020/07 (LINUXPG-466): Add BSP support for ZYNQMP ZCU102 board based on xilinx-sdk-2020.01
+  - 2021/09 (LINUXPG-954): Add BSP support for ZYNQMP ZCU102 board based on xilinx-sdk-2021.01
+  - 2021/12 (LINUXPG-996): Upgrade BSP support for ZYNQMP ZCU102 board based on xilinx-sdk-2021.02
+  - 2021/12 (LINUXPG-1022): Add preempt-rt support for ZYNQMP ZCU102 board based on xilinx-sdk-2021.02
 
 
 3. BSP Features
